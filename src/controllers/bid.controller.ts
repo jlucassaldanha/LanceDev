@@ -37,7 +37,7 @@ export class BidController {
         case 'USER_NOT_FOUND':
           return res.status(404).json({ error: 'Licitante não encontrado.' });
         case 'ALREADY_WINNING':
-          return res.status(400).json({ error: 'Você já está ganhando este lote.' });
+          return res.status(400).json({ error: 'Você não pode fazer um novo lance pois já está ganhando este lote.' });
         case 'BID_TOO_LOW':
           return res.status(400).json({ error: 'O valor do lance está abaixo do mínimo permitido.' });
         case 'INSUFFICIENT_FUNDS':
