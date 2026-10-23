@@ -5,6 +5,9 @@ import { authenticate, isLeiloeiro } from '../middlewares/auth.middleware';
 const router = Router();
 const lotController = new LotController();
 
+// Rota de pesquisa na API externa (Auxilia o leiloeiro a encontrar o externalItemId)
+router.get('/search', authenticate, isLeiloeiro, (req, res) => lotController.search(req, res));
+
 // Listar lotes da vitrine (público ou geral)
 router.get('/', (req, res) => lotController.list(req, res));
 

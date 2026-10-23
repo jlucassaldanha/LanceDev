@@ -213,4 +213,55 @@ describe('Integração: Lotes', () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('Lote não encontrado.');
   });
+
+  it('Deve pesquisar itens na API externa com sucesso sendo um LEILOEIRO', async () => {
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes('/public/collection/v1/search')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ objectIDs: [436532] }),
+        });
+      }
+      if (url.includes('/public/collection/v1/objects/436532')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            objectID: 436532,
+            title: 'Sunflowers',
+            primaryImageSmall: 'http://imagem.com/sunflowers.jpg',
+            artistDisplayName: 'Vincent van Gogh',
+            objectDate: '1888',
+          }),
+        });
+      }
+      return Promise.reject(new Error('URL desconhecida no mock'));
+    });
+
+    const response = await request(app)
+      .get('/lots/search?q=sunflowers')
+      .set('Authorization', `Bearer ${leiloeiroToken}`);
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0]).toHaveProperty('title', 'Sunflowers');
+    expect(response.body[0]).toHaveProperty('artistDisplayName', 'Vincent van Gogh');
+  });
+
+  it('Não deve permitir a busca sem o parâmetro "q"', async () => {
+    const response = await request(app)
+      .get('/lots/search')
+      .set('Authorization', `Bearer ${leiloeiroToken}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('O parâmetro de busca "q" é obrigatório.');
+  });
+
+  it('Deve bloquear a busca realizada por um LICITANTE', async () => {
+    const response = await request(app)
+      .get('/lots/search?q=sunflowers')
+      .set('Authorization', `Bearer ${licitanteToken}`);
+
+    expect(response.status).toBe(403);
+  });
 });

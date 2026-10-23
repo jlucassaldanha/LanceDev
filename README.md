@@ -7,41 +7,25 @@ Este é o repositório do back-end para o desafio da Casa de Leilões online. A 
 Para garantir uma base sólida e escalável, as seguintes decisões foram tomadas durante o desenvolvimento:
 
 * **Entidade de Usuário Unificada com Roles:** Optamos por utilizar uma única tabela de `User` no banco de dados, diferenciando os perfis através de um enum de `Role` (LEILOEIRO e LICITANTE). Essa escolha simplifica o fluxo de autenticação e mantém o banco de dados limpo.
-
-
 * **Segurança via Middlewares:** A separação de responsabilidades e a robustez das regras de negócio (como garantir que o leiloeiro não dê lances e o licitante não crie lotes) ficam centralizadas na camada de código. Middlewares interceptam as requisições baseados no token JWT para fazer a autorização de papéis.
-
-
 * **Prisma 7:** O ORM escolhido foi o Prisma na versão 7, devido à sua estabilidade consolidada, previsibilidade nas migrações em relação a versões mais recentes, e pela familiaridade técnica.
-
-
 * **Docker Compose:** Utilizado para orquestrar o banco de dados PostgreSQL. É a melhor abordagem para criar e padronizar o banco de dados no ambiente de desenvolvimento sem poluir a máquina local.
-
-
 * **Swagger:** Adicionado para documentar os endpoints e facilitar os testes manuais da API diretamente pelo navegador, proporcionando uma interface visual amigável.
-
-
 
 ## O que foi feito até agora
 
 * Configuração do projeto com **Node.js, Express e TypeScript** estruturado em camadas (Controllers, Services, Repositories e Middlewares).
-
-
 * Modelagem do banco de dados (Prisma Schema) contemplando as tabelas de Usuários, Lotes e Lances com os devidos controles de saldo e campos para auditoria de histórico (hashes).
-
-
 * Implementação do fluxo de **Registro e Login de usuários**, com criptografia de senhas usando `bcryptjs` e geração de tokens `JWT`.
-
-
 * Criação da "catraca de segurança" (Middlewares) para proteger rotas específicas para `LEILOEIRO` ou `LICITANTE`.
+* Implementação da **Carteira**, com funcionalidade de depósito exclusiva para `LICITANTE` e consulta de saldo (total, comprometido e disponível) acessível tanto para `LICITANTE` quanto para `LEILOEIRO`.
 
-* Implementação da **Carteira**, com possibilidade de deposito para `LICITANTE` e geração de consulta de saldo.
+
+* Integração com API externa (The Metropolitan Museum of Art) para pesquisa de itens. Como medida de **resiliência**, todo lote criado tem seus dados (título, imagem) salvos no banco local, garantindo que a aplicação continue funcionando integralmente mesmo em caso de queda da API externa.
 
 
 * Documentação inicial da API com **Swagger UI**.
-
-
-* Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest para validar as regras de autenticação e rotas.
+* Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest para validar as regras de autenticação, carteira e rotas.
 
 
 
@@ -92,9 +76,10 @@ npx prisma migrate dev
 
 **5. Gere o Prisma Client:**
 Isso criará as tipagens locais do TypeScript necessárias para que a aplicação reconheça os modelos de dados:
-Bash
+
 ```bash
 npx prisma generate
+
 ```
 
 **6. Inicie o servidor de desenvolvimento:**
@@ -117,6 +102,6 @@ npm run test
 
 ## Uso de Inteligência Artificial
 
-Conforme permitido e encorajado nas regras do desafio, ferramentas de IA foram utilizadas ao longo do desenvolvimento deste projeto[cite: 1]. O uso foi estritamente focado em consultoria arquitetural, esclarecimento de dúvidas e aceleração de *boilerplate*, com revisão humana integral. 
+Conforme as instruções de envio do desafio, ferramentas de IA foram utilizadas ao longo do desenvolvimento deste projeto. O uso foi estritamente focado em consultoria arquitetural, esclarecimento de dúvidas e aceleração de *boilerplate*, com revisão humana integral.
 
-Para ler os detalhes completos sobre quais decisões tiveram apoio de IA e como o código foi revisado, acesse a [Declaração de Uso de IA](./IA_USE.md).
+Para ler os detalhes completos sobre quais decisões tiveram apoio de IA e como o código foi revisado, acesse a [Declaração de Uso de IA](IA_USE.md).

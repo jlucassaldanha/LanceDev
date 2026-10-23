@@ -204,7 +204,29 @@ export const swaggerDocs = {
         },
       },
     },
-
+    '/lots/search': {
+      get: {
+        summary: 'Pesquisa itens na The Met API para auxiliar na obtenção do externalItemId (Apenas LEILOEIRO)',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'q',
+            in: 'query',
+            required: true,
+            schema: { type: 'string' },
+            description: 'Termo de busca (ex: sunflowers, rembrandt)',
+          },
+        ],
+        responses: {
+          200: { description: 'Lista de itens encontrados na API externa' },
+          400: { description: 'Parâmetro de busca ausente' },
+          401: { description: 'Token não fornecido ou inválido' }, 
+          403: { description: 'Acesso negado (apenas LEILOEIRO)' }, 
+          502: { description: 'Erro na API externa' },
+        },
+      },
+    },
 
   },
 };

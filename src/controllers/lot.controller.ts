@@ -87,4 +87,27 @@ export class LotController {
       return res.status(500).json({ error: 'Erro interno ao buscar o lote.' });
     }
   }
+
+  async search(req: Request, res: Response) {
+    try {
+      const query = req.query.q as string;
+
+      if (!query) {
+        return res.status(400).json({ error: 'O parâmetro de busca "q" é obrigatório.' });
+      }
+
+      const results = await lotService.searchExternalItems(query);
+      return res.status(200).json(results);
+    } catch (error: any) {
+      switch (error.message) {
+        case 'QUERY_REQUIRED':
+          return res.status(400).json({ error: 'Informe um termo para pesquisa.' });
+        case 'EXTERNAL_API_UNAVAILABLE':
+          return res.status(502).json({ error: 'Erro ao se comunicar com a API do museu. Tente novamente mais tarde.' });
+        default:
+          console.error('Erro ao pesquisar itens na API externa:', error);
+          return res.status(500).json({ error: 'Erro interno ao processar a busca.' });
+      }
+    }
+  }
 }

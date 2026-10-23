@@ -86,4 +86,46 @@ export class LotService {
     }
     return lot;
   }
+
+  async searchExternalItems(query: string) {
+    if (!query) {
+      throw new Error('QUERY_REQUIRED');
+    }
+
+    try {
+      const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(query)}`);
+      
+      if (!response.ok) {
+        throw new Error('API_ERROR');
+      }
+
+      const data = await response.json();
+      const objectIDs: number[] = data.objectIDs || [];
+
+      const limitedIDs = objectIDs.slice(0, 10);
+
+      const items = await Promise.all(
+        limitedIDs.map(async (id) => {
+          try {
+            const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
+            if (!objRes.ok) return null;
+            const objData = await objRes.json();
+            return {
+              objectID: objData.objectID,
+              title: objData.title,
+              primaryImageSmall: objData.primaryImageSmall || objData.primaryImage || '',
+              artistDisplayName: objData.artistDisplayName || 'Desconhecido',
+              objectDate: objData.objectDate || '',
+            };
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      return items.filter(Boolean);
+    } catch (error: any) {
+      throw new Error('EXTERNAL_API_UNAVAILABLE');
+    }
+  }
 }
