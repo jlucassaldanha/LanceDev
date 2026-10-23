@@ -1,4 +1,4 @@
- Desafio Elite Dev 2026 - 2 (Back-end)
+# Desafio Elite Dev 2026 - 2 (Back-end)
 
 Este é o repositório do back-end para o desafio da Casa de Leilões online. A API foi construída em Node.js com Express e TypeScript, focando em robustez, resiliência e segurança arquitetural.
 
@@ -10,7 +10,7 @@ Para garantir uma base sólida e escalável, as seguintes decisões foram tomada
 
 - **Segurança via Middlewares:** A separação de responsabilidades e a robustez das regras de negócio (como garantir que o leiloeiro não dê lances e o licitante não crie lotes) ficam centralizadas na camada de código. Middlewares interceptam as requisições baseados no token JWT para fazer a autorização de papéis.
 
-* **Endpoint Consolidado (Live Room):** Para evitar o anti-padrão de sobrecarregar o front-end com múltiplos cálculos e requisições paralelas, criamos um endpoint dedicado (`GET /lots/:id/live-room`). Ele centraliza a lógica de estado, cruzamento de dados de liderança (`isWinning`), aplica o mascaramento de privacidade e entrega os dados prontos para renderização sincronizados pelo relógio do servidor.
+- **Endpoint Consolidado (Live Room):** Para evitar o anti-padrão de sobrecarregar o front-end com múltiplos cálculos e requisições paralelas, criamos um endpoint dedicado (`GET /lots/:id/live-room`). Ele centraliza a lógica de estado, cruzamento de dados de liderança (`isWinning`), aplica o mascaramento de privacidade e entrega os dados prontos para renderização sincronizados pelo relógio do servidor.
 
 - **Prisma 7:** O ORM escolhido foi o Prisma na versão 7, devido à sua estabilidade consolidada, previsibilidade nas migrações em relação a versões mais recentes, e pela familiaridade técnica.
 
@@ -30,10 +30,13 @@ Para garantir uma base sólida e escalável, as seguintes decisões foram tomada
 - Implementação do **Motor de Lances** (`POST /lots/:id/bids`), garantindo validação de horário, incremento mínimo, checagem e bloqueio de saldo em tempo real, bloqueio de auto-superação e regra de *anti-sniping* (prorrogação de 2 minutos).
 - Criação do endpoint consolidado para a **Sala do Lote ao Vivo** (`GET /lots/:id/live-room`), entregando dados mastigados para o front-end (maior lance atual, histórico com nomes mascarados por privacidade, flag `isWinning` e tempo do servidor sincronizado).
 - Implementação do **Mecanismo de Liquidação**, transferindo o saldo comprometido para o leiloeiro ao fim do lote.
+- Implementação de **Cron Job** para automação do ciclo de vida dos leilões, responsável por verificar periodicamente e atualizar o status dos lotes (como transições de ativo para finalizado) e disparar as regras de encerramento.
+- Criação da nova rota de **Winnings** para consulta de lotes arrematados/vencidos pelos usuários.
 - **Estratégia de Auditoria (Blockchain Pattern):** Implementação de encadeamento criptográfico com SHA-256 (`crypto.createHash('sha256')`) combinando os dados do lance (`lotId + bidderId + amount`) com o `previousHash` do lance anterior (ou `'GENESIS'` para o primeiro lance). Qualquer alteração direta no banco de dados quebra a integridade da cadeia de hashes, sendo detectada de forma transparente pela **Rota de Auditoria Pública**.
+Saiba mais em [Estratégia de Auditoria](audit.md).
 - Script de **Seed** (`prisma/seed.ts`) configurado para popular o banco de dados com 1 leiloeiro, 2 licitantes e 1 lote ativo.
 - Documentação da API com **Swagger UI**.
-- Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest para validar todas as regras de negócio.
+- Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest. Os testes cobrem o fluxo ponta a ponta das principais rotas do sistema (autenticação, carteira, motor de lances, salas ao vivo e regras de negócio essenciais). *Nota: A rota de winnings adicionada recentemente ainda não possui cobertura de testes automatizados nesta versão.*
 
 ## Como rodar a aplicação localmente
 
