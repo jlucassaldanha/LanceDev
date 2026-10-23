@@ -33,7 +33,7 @@ Para garantir uma base sólida e escalável, as seguintes decisões foram tomada
 - Implementação de **Cron Job** para automação do ciclo de vida dos leilões, responsável por verificar periodicamente e atualizar o status dos lotes (como transições de ativo para finalizado) e disparar as regras de encerramento.
 - Criação da nova rota de **Winnings** para consulta de lotes arrematados/vencidos pelos usuários.
 - **Estratégia de Auditoria (Blockchain Pattern):** Implementação de encadeamento criptográfico com SHA-256 (`crypto.createHash('sha256')`) combinando os dados do lance (`lotId + bidderId + amount`) com o `previousHash` do lance anterior (ou `'GENESIS'` para o primeiro lance). Qualquer alteração direta no banco de dados quebra a integridade da cadeia de hashes, sendo detectada de forma transparente pela **Rota de Auditoria Pública**.
-Saiba mais em [Estratégia de Auditoria](audit.md).
+Saiba mais em [Estratégia de Auditoria](AUDIT.md).
 - Script de **Seed** (`prisma/seed.ts`) configurado para popular o banco de dados com 1 leiloeiro, 2 licitantes e 1 lote ativo.
 - Documentação da API com **Swagger UI**.
 
