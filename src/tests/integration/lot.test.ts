@@ -216,7 +216,7 @@ describe('Integração: Lotes', () => {
 
   it('Deve pesquisar itens na API externa com sucesso sendo um LEILOEIRO', async () => {
     global.fetch = vi.fn().mockImplementation((url: string) => {
-      if (url.includes('/public/collection/v1/search')) {
+      if (url.includes('/public/collection/v1.1/search')) {
         return Promise.resolve({
           ok: true,
           json: async () => ({ objectIDs: [436532] }),
@@ -260,6 +260,31 @@ describe('Integração: Lotes', () => {
   it('Deve bloquear a busca realizada por um LICITANTE', async () => {
     const response = await request(app)
       .get('/lots/search?q=sunflowers')
+      .set('Authorization', `Bearer ${licitanteToken}`);
+
+    expect(response.status).toBe(403);
+  });
+
+  it('Deve listar os lotes do leiloeiro autenticado com sucesso', async () => {
+    const response = await request(app)
+      .get('/lots/my-lots')
+      .set('Authorization', `Bearer ${leiloeiroToken}`); 
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+  });
+
+  it('Não deve permitir acesso aos "meus lotes" sem estar autenticado (Sem Token)', async () => {
+    const response = await request(app)
+      .get('/lots/my-lots');
+
+    expect(response.status).toBe(401);
+    expect(response.body.error).toBeDefined();
+  });
+
+  it('Não deve permitir que um LICITANTE acesse a rota de "meus lotes" do leiloeiro', async () => {
+    const response = await request(app)
+      .get('/lots/my-lots')
       .set('Authorization', `Bearer ${licitanteToken}`);
 
     expect(response.status).toBe(403);

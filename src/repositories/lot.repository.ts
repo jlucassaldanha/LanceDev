@@ -59,4 +59,16 @@ export class LotRepository {
       },
     });
   }
+
+  async findByCreatorId(creatorId: string) {
+    return prisma.lot.findMany({
+      where: { creatorId },
+      include: {
+        _count: {
+          select: { bids: true }, // Traz a contagem de lances
+        },
+      },
+      orderBy: { startTime: 'desc' }, // Mais recentes primeiro
+    });
+  }
 }

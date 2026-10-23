@@ -227,6 +227,18 @@ export const swaggerDocs = {
         },
       },
     },
+    '/lots/my-lots': {
+      get: {
+        summary: 'Lista todos os lotes criados pelo leiloeiro autenticado',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: 'Lista dos meus lotes retornada com sucesso' },
+          401: { description: 'Token ausente ou inválido' },
+          403: { description: 'Acesso negado (apenas LEILOEIRO)' },
+        },
+      },
+    },
 
   },
 };

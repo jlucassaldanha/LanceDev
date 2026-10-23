@@ -110,4 +110,17 @@ export class LotController {
       }
     }
   }
+
+  async listMyLots(req: Request, res: Response) {
+    try {
+      const leiloeiroId = req.user!.id; 
+      
+      const lots = await lotService.listMyLots(leiloeiroId);
+      
+      return res.status(200).json(lots);
+    } catch (error) {
+      console.error('Erro ao listar lotes do leiloeiro:', error);
+      return res.status(500).json({ error: 'Erro interno ao buscar seus lotes.' });
+    }
+  }
 }

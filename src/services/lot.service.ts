@@ -93,7 +93,7 @@ export class LotService {
     }
 
     try {
-      const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1.1/search?q=${encodeURIComponent(query)}`);
       
       if (!response.ok) {
         throw new Error('API_ERROR');
@@ -127,5 +127,9 @@ export class LotService {
     } catch (error: any) {
       throw new Error('EXTERNAL_API_UNAVAILABLE');
     }
+  }
+
+  async listMyLots(creatorId: string) {
+    return await lotRepository.findByCreatorId(creatorId);
   }
 }
