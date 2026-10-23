@@ -1,3 +1,4 @@
 uma entidade de user com dois roles a separação de responsabilidade e robustez vai ficar no codigo n nos modelos
+middleware é qm cuida do role a autenticação de papel
 uso do prisma 7 por ser mais consolidado e eu ja conhecer
 docker compose por ser melhor para criar um banco de dados de dev
