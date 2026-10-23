@@ -66,5 +66,57 @@ export const swaggerDocs = {
         },
       },
     },
+    '/wallet': {
+      get: {
+        summary: 'Consulta os saldos da carteira do usuário logado',
+        tags: ['Carteira'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { 
+            description: 'Saldos retornados com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    totalBalance: { type: 'number', example: 500.50 },
+                    committedBalance: { type: 'number', example: 100.00 },
+                    availableBalance: { type: 'number', example: 400.50 },
+                  }
+                }
+              }
+            }
+          },
+          401: { description: 'Token não fornecido ou inválido' },
+          403: { description: 'Acesso negado (apenas LICITANTE)' },
+        },
+      },
+    },
+    '/wallet/deposit': {
+      post: {
+        summary: 'Realiza um depósito simulado na carteira',
+        tags: ['Carteira'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  amount: { type: 'number', example: 500.50 },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Depósito realizado com sucesso' },
+          400: { description: 'Valor inválido' },
+          401: { description: 'Token não fornecido ou inválido' },
+          403: { description: 'Acesso negado (apenas LICITANTE)' },
+        },
+      },
+    },
   },
 };

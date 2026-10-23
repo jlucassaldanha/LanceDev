@@ -3,3 +3,5 @@ middleware é qm cuida do role a autenticação de papel
 uso do prisma 7 por ser mais consolidado e eu ja conhecer
 docker compose por ser melhor para criar um banco de dados de dev
 adição de swagger por facilidade de testes
+
+adição de carteira com deposito apenas para licitante e consulta de saldo para licitante e leiloeiro
