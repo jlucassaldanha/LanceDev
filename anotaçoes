@@ -1,14 +1,5 @@
-uma entidade de user com dois roles a separação de responsabilidade e robustez vai ficar no codigo n nos modelos
-middleware é qm cuida do role a autenticação de papel
-uso do prisma 7 por ser mais consolidado e eu ja conhecer
-docker compose por ser melhor para criar um banco de dados de dev
-adição de swagger por facilidade de testes
 
-adição de carteira com deposito apenas para licitante e consulta de saldo para licitante e leiloeiro
-Todo lote publicado ao ser pesquisado na api é salvo no banco local para que não tenhamos que depender sempre da api externa
-
-adição de rota de busca de meus lotes para facilitar listagem no frontend
-
+explicar melhor:
 Estratégia de Auditoria: Encadeamento Criptográfico (Blockchain Pattern)
 
 Para garantir que nenhuma inserção, remoção ou alteração de lances ocorra diretamente no banco de dados sem ser detectada, utilizei o algoritmo SHA-256 para criar uma estrutura de lista encadeada (semelhante ao funcionamento de uma Blockchain).
@@ -18,3 +9,7 @@ Cada novo lance gerado passa pela função de hash crypto.createHash('sha256'). 
 
 Por que é à prova de adulteração?
 Efeito Avalanche. Se um administrador mal-intencionado entrar direto no PostgreSQL e alterar o valor de um lance antigo de 1000 para 5000, o hash salvo naquele registro deixará de ser matematicamente compatível com os dados reais da linha. Além disso, o lance imediatamente seguinte a ele, que carrega o previousHash, também apontará a inconsistência, quebrando toda a cadeia subsequente de validação. Na rota de auditoria pública, o sistema simplesmente recalcula a cadeia desde o GENESIS; qualquer divergência identificará imediatamente que o histórico foi violado.
+
+explicar melhor sobre o uso de ia
+
+explicar sobre os testes
