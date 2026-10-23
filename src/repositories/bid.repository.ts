@@ -60,4 +60,11 @@ export class BidRepository {
     // Executa tudo garantindo o conceito ACID
     return prisma.$transaction(operations);
   }
+
+  async findByLotId(lotId: string) {
+    return prisma.bid.findMany({
+      where: { lotId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

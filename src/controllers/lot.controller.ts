@@ -131,7 +131,7 @@ export class LotController {
       if (typeof id !== 'string') {
         return res.status(400).json({ error: 'O ID deve ser uma string válida.' });
       }
-      
+
       const result = await lotService.liquidateLot(id);
       return res.status(200).json(result);
     } catch (error: any) {
@@ -146,6 +146,26 @@ export class LotController {
           console.error('Erro ao liquidar lote:', error);
           return res.status(500).json({ error: 'Erro interno ao processar a liquidação.' });
       }
+    }
+  }
+
+  async getLiveRoom(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const currentUserId = req.user?.id; // Extraído do token JWT pelo middleware de autenticação
+
+      if (typeof id !== 'string') {
+        return res.status(400).json({ error: 'O ID deve ser uma string válida.' });
+      }
+      
+      const result = await lotService.getLiveRoomData(id, currentUserId);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      if (error.message === 'LOT_NOT_FOUND') {
+        return res.status(404).json({ error: 'Lote não encontrado.' });
+      }
+      console.error('Erro ao carregar sala ao vivo:', error);
+      return res.status(500).json({ error: 'Erro interno ao carregar a sala ao vivo.' });
     }
   }
 }

@@ -318,6 +318,26 @@ export const swaggerDocs = {
         },
       },
     },
-    
+    '/lots/{id}/live-room': {
+      get: {
+        summary: 'Retorna todas as informações consolidadas para a Sala do Lote ao Vivo',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID do lote',
+          },
+        ],
+        responses: {
+          200: { description: 'Dados da sala ao vivo retornados com sucesso' },
+          401: { description: 'Não autenticado' },
+          404: { description: 'Lote não encontrado' },
+        },
+      },
+    },
   },
 };

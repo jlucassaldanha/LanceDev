@@ -1,8 +1,11 @@
+import { prisma } from '../config/database';
 import { BidRepository } from '../repositories/bid.repository';
 import { LotRepository } from '../repositories/lot.repository';
+import { UserRepository } from '../repositories/user.repository';
 
 const lotRepository = new LotRepository();
 const bidRepository = new BidRepository();
+const userRepository = new UserRepository();
 
 interface CreateLotDTO {
   externalItemId: string;
@@ -10,6 +13,18 @@ interface CreateLotDTO {
   minimumIncrement: number;
   startTime: string;
   endTime: string;
+}
+
+function maskBidderName(name?: string): string {
+  if (!name) return 'Licitante Anônimo';
+  const parts = name.trim().split(' ');
+  const firstName = parts[0];
+  const lastName = parts[1];
+
+  if (lastName) {
+    return `${firstName} ${lastName.charAt(0)}.`;
+  }
+  return `${name.substring(0, 3)}***`;
 }
 
 export class LotService {
@@ -179,5 +194,58 @@ export class LotService {
         winningAmount: 0,
       };
     }
+  }
+
+  async getLiveRoomData(lotId: string, currentUserId?: string) {
+    // 1. Busca o lote e os lances básicos (que só têm bidderId)
+    const lot = await lotRepository.findById(lotId);
+    if (!lot) throw new Error('LOT_NOT_FOUND');
+
+    const highestBid = await bidRepository.findHighestBid(lotId);
+    const allBids = await bidRepository.findByLotId(lotId);
+
+    // 2. Extrai todos os IDs únicos de usuários que deram lance nesse lote
+    const bidderIds = Array.from(new Set(allBids.map(b => b.bidderId)));
+    if (highestBid) bidderIds.push(highestBid.bidderId);
+
+    // 3. Busca todos esses usuários de uma só vez usando o UserRepository
+    const users = await userRepository.findByIds(bidderIds); 
+    const userMap = new Map(users.map(u => [u.id, u]));
+
+    // 4. Faz o cruzamento em memória (sem tocar no schema do banco)
+    const isWinning = highestBid ? highestBid.bidderId === currentUserId : false;
+
+    const formattedBids = allBids.map(bid => {
+      const bidder = userMap.get(bid.bidderId);
+      return {
+        id: bid.id,
+        amount: bid.amount,
+        createdAt: bid.createdAt,
+        bidderName: maskBidderName(bidder?.name || ''),
+        isUserBid: currentUserId ? bid.bidderId === currentUserId : false,
+      };
+    });
+
+    return {
+      serverTime: new Date(),
+      lot: {
+        id: lot.id,
+        title: lot.title,
+        imageUrl: lot.imageUrl,
+        startingBid: lot.startingBid,
+        minimumIncrement: lot.minimumIncrement,
+        startTime: lot.startTime,
+        endTime: lot.endTime,
+        status: lot.status,
+      },
+      currentLeader: highestBid ? {
+        amount: highestBid.amount,
+        bidderName: maskBidderName(userMap.get(highestBid.bidderId)?.name || ''),
+      } : null,
+      userStatus: {
+        isWinning,
+      },
+      bidsHistory: formattedBids,
+    };
   }
 }

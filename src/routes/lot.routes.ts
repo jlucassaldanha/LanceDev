@@ -14,6 +14,8 @@ router.get('/my-lots', authenticate, isLeiloeiro, (req, res) => lotController.li
 // Listar lotes da vitrine (público ou geral)
 router.get('/', (req, res) => lotController.list(req, res));
 
+router.get('/:id/live-room', authenticate, isLicitante, (req, res) => lotController.getLiveRoom(req, res));
+
 // Detalhes de um lote específico
 router.get('/:id', (req, res) => lotController.getById(req, res));
 
