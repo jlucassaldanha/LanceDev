@@ -6,26 +6,52 @@ Este é o repositório do back-end para o desafio da Casa de Leilões online. A 
 
 Para garantir uma base sólida e escalável, as seguintes decisões foram tomadas durante o desenvolvimento:
 
-* **Entidade de Usuário Unificada com Roles:** Optamos por utilizar uma única tabela de `User` no banco de dados, diferenciando os perfis através de um enum de `Role` (LEILOEIRO e LICITANTE). Essa escolha simplifica o fluxo de autenticação e mantém o banco de dados limpo.
+* **Entidade de Usuário Unificada com Roles:** Optamos por utilizar uma única tabela de `User` no banco de dados, diferenciando os perfis através de um enum de `Role` (`LEILOEIRO` e `LICITANTE`). Essa escolha simplifica o fluxo de autenticação e mantém o banco de dados limpo.
+
+
 * **Segurança via Middlewares:** A separação de responsabilidades e a robustez das regras de negócio (como garantir que o leiloeiro não dê lances e o licitante não crie lotes) ficam centralizadas na camada de código. Middlewares interceptam as requisições baseados no token JWT para fazer a autorização de papéis.
+
+
 * **Prisma 7:** O ORM escolhido foi o Prisma na versão 7, devido à sua estabilidade consolidada, previsibilidade nas migrações em relação a versões mais recentes, e pela familiaridade técnica.
+
+
 * **Docker Compose:** Utilizado para orquestrar o banco de dados PostgreSQL. É a melhor abordagem para criar e padronizar o banco de dados no ambiente de desenvolvimento sem poluir a máquina local.
+
+
 * **Swagger:** Adicionado para documentar os endpoints e facilitar os testes manuais da API diretamente pelo navegador, proporcionando uma interface visual amigável.
+
+
 
 ## O que foi feito até agora
 
 * Configuração do projeto com **Node.js, Express e TypeScript** estruturado em camadas (Controllers, Services, Repositories e Middlewares).
-* Modelagem do banco de dados (Prisma Schema) contemplando as tabelas de Usuários, Lotes e Lances com os devidos controles de saldo e campos para auditoria de histórico (hashes).
+
+
+* Modelagem do banco de dados (Prisma Schema) contemplando as tabelas de Usuários, Lotes e Lances com os devidos controles de saldo e campos para auditoria de histórico (`hashes`).
+
+
 * Implementação do fluxo de **Registro e Login de usuários**, com criptografia de senhas usando `bcryptjs` e geração de tokens `JWT`.
+
+
 * Criação da "catraca de segurança" (Middlewares) para proteger rotas específicas para `LEILOEIRO` ou `LICITANTE`.
+
+
 * Implementação da **Carteira**, com funcionalidade de depósito exclusiva para `LICITANTE` e consulta de saldo (total, comprometido e disponível) acessível tanto para `LICITANTE` quanto para `LEILOEIRO`.
 
 
-* Integração com API externa (The Metropolitan Museum of Art) para pesquisa de itens. Como medida de **resiliência**, todo lote criado tem seus dados (título, imagem) salvos no banco local, garantindo que a aplicação continue funcionando integralmente mesmo em caso de queda da API externa.
+* Integração com API externa (The Metropolitan Museum of Art) para pesquisa de itens. Como medida de **resiliência**, todo lote publicado ao ser pesquisado na API tem seus dados (título, imagem) salvos no banco local, garantindo que a aplicação continue funcionando integralmente mesmo em caso de instabilidade ou queda da API externa.
+
+
+* Adição da rota de busca de **"Meus Lotes"** (`GET /lots/my-lots`), facilitando a listagem e o gerenciamento no painel do front-end.
+
+
+* **Estratégia de Auditoria (Blockchain Pattern):** Implementação de encadeamento criptográfico com SHA-256 (`crypto.createHash('sha256')`) combinando os dados do lance (`lotId + bidderId + amount`) com o `previousHash` do lance anterior (ou `'GENESIS'` para o primeiro lance). Qualquer alteração direta no banco de dados quebra a integridade da cadeia de hashes, sendo detectada de forma transparente.
 
 
 * Documentação inicial da API com **Swagger UI**.
-* Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest para validar as regras de autenticação, carteira e rotas.
+
+
+* Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest para validar as regras de autenticação, carteira, lotes e lances.
 
 
 
@@ -99,6 +125,10 @@ Para executar os testes de integração configurados com Vitest:
 npm run test
 
 ```
+
+## Decisões Arquiteturais (ADRs)
+
+As decisões técnicas fundamentais deste projeto (escolhas de modelagem, resiliência de API, estratégia de auditoria e stack escolhida) estão formalmente documentadas através de Architecture Decision Records na pasta [docs/adr/](https://www.google.com/search?q=./docs/adr/).
 
 ## Uso de Inteligência Artificial
 
