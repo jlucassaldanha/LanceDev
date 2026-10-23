@@ -1,4 +1,4 @@
-# Desafio Elite Dev 2026 - 2 (Back-end)
+ Desafio Elite Dev 2026 - 2 (Back-end)
 
 Este é o repositório do back-end para o desafio da Casa de Leilões online. A API foi construída em Node.js com Express e TypeScript, focando em robustez, resiliência e segurança arquitetural.
 
@@ -6,54 +6,34 @@ Este é o repositório do back-end para o desafio da Casa de Leilões online. A 
 
 Para garantir uma base sólida e escalável, as seguintes decisões foram tomadas durante o desenvolvimento:
 
-* **Entidade de Usuário Unificada com Roles:** Optamos por utilizar uma única tabela de `User` no banco de dados, diferenciando os perfis através de um enum de `Role` (`LEILOEIRO` e `LICITANTE`). Essa escolha simplifica o fluxo de autenticação e mantém o banco de dados limpo.
+- **Entidade de Usuário Unificada com Roles:** Optamos por utilizar uma única tabela de `User` no banco de dados, diferenciando os perfis através de um enum de `Role` (`LEILOEIRO` e `LICITANTE`). Essa escolha simplifica o fluxo de autenticação e mantém o banco de dados limpo.
 
+- **Segurança via Middlewares:** A separação de responsabilidades e a robustez das regras de negócio (como garantir que o leiloeiro não dê lances e o licitante não crie lotes) ficam centralizadas na camada de código. Middlewares interceptam as requisições baseados no token JWT para fazer a autorização de papéis.
 
-* **Segurança via Middlewares:** A separação de responsabilidades e a robustez das regras de negócio (como garantir que o leiloeiro não dê lances e o licitante não crie lotes) ficam centralizadas na camada de código. Middlewares interceptam as requisições baseados no token JWT para fazer a autorização de papéis.
+* **Endpoint Consolidado (Live Room):** Para evitar o anti-padrão de sobrecarregar o front-end com múltiplos cálculos e requisições paralelas, criamos um endpoint dedicado (`GET /lots/:id/live-room`). Ele centraliza a lógica de estado, cruzamento de dados de liderança (`isWinning`), aplica o mascaramento de privacidade e entrega os dados prontos para renderização sincronizados pelo relógio do servidor.
 
+- **Prisma 7:** O ORM escolhido foi o Prisma na versão 7, devido à sua estabilidade consolidada, previsibilidade nas migrações em relação a versões mais recentes, e pela familiaridade técnica.
 
-* **Prisma 7:** O ORM escolhido foi o Prisma na versão 7, devido à sua estabilidade consolidada, previsibilidade nas migrações em relação a versões mais recentes, e pela familiaridade técnica.
+- **Docker Compose:** Utilizado para orquestrar o banco de dados PostgreSQL. É a melhor abordagem para criar e padronizar o banco de dados no ambiente de desenvolvimento sem poluir a máquina local.
 
-
-* **Docker Compose:** Utilizado para orquestrar o banco de dados PostgreSQL. É a melhor abordagem para criar e padronizar o banco de dados no ambiente de desenvolvimento sem poluir a máquina local.
-
-
-* **Swagger:** Adicionado para documentar os endpoints e facilitar os testes manuais da API diretamente pelo navegador, proporcionando uma interface visual amigável.
-
-
+- **Swagger:** Adicionado para documentar os endpoints e facilitar os testes manuais da API diretamente pelo navegador, proporcionando uma interface visual amigável.
 
 ## O que foi feito até agora
 
-* Configuração do projeto com **Node.js, Express e TypeScript** estruturado em camadas (Controllers, Services, Repositories e Middlewares).
-
-
-* Modelagem do banco de dados (Prisma Schema) contemplando as tabelas de Usuários, Lotes e Lances com os devidos controles de saldo e campos para auditoria de histórico (`hashes`).
-
-
-* Implementação do fluxo de **Registro e Login de usuários**, com criptografia de senhas usando `bcryptjs` e geração de tokens `JWT`.
-
-
-* Criação da "catraca de segurança" (Middlewares) para proteger rotas específicas para `LEILOEIRO` ou `LICITANTE`.
-
-
-* Implementação da **Carteira**, com funcionalidade de depósito exclusiva para `LICITANTE` e consulta de saldo (total, comprometido e disponível) acessível tanto para `LICITANTE` quanto para `LEILOEIRO`.
-
-
-* Integração com API externa (The Metropolitan Museum of Art) para pesquisa de itens. Como medida de **resiliência**, todo lote publicado ao ser pesquisado na API tem seus dados (título, imagem) salvos no banco local, garantindo que a aplicação continue funcionando integralmente mesmo em caso de instabilidade ou queda da API externa.
-
-
-* Adição da rota de busca de **"Meus Lotes"** (`GET /lots/my-lots`), facilitando a listagem e o gerenciamento no painel do front-end.
-
-
-* **Estratégia de Auditoria (Blockchain Pattern):** Implementação de encadeamento criptográfico com SHA-256 (`crypto.createHash('sha256')`) combinando os dados do lance (`lotId + bidderId + amount`) com o `previousHash` do lance anterior (ou `'GENESIS'` para o primeiro lance). Qualquer alteração direta no banco de dados quebra a integridade da cadeia de hashes, sendo detectada de forma transparente.
-
-
-* Documentação inicial da API com **Swagger UI**.
-
-
-* Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest para validar as regras de autenticação, carteira, lotes e lances.
-
-
+- Configuração do projeto com **Node.js, Express e TypeScript** estruturado em camadas (Controllers, Services, Repositories e Middlewares).
+- Modelagem do banco de dados (Prisma Schema) contemplando as tabelas de Usuários, Lotes e Lances com os devidos controles de saldo e campos para auditoria de histórico (`hashes`).
+- Implementação do fluxo de **Registro e Login de usuários**, com criptografia de senhas usando `bcryptjs` e geração de tokens `JWT`.
+- Criação da "catraca de segurança" (Middlewares) para proteger rotas específicas para `LEILOEIRO` ou `LICITANTE`.
+- Implementação da **Carteira**, com funcionalidade de depósito exclusiva para `LICITANTE` e consulta de saldo (total, comprometido e disponível) acessível tanto para `LICITANTE` quanto para `LEILOEIRO`.
+- Integração com API externa (The Metropolitan Museum of Art) para pesquisa de itens. Como medida de **resiliência**, todo lote publicado ao ser pesquisado na API tem seus dados (título, imagem) salvos no banco local, garantindo que a aplicação continue funcionando integralmente mesmo em caso de instabilidade ou queda da API externa.
+- Adição da rota de busca de **"Meus Lotes"** (`GET /lots/my-lots`), facilitando a listagem e o gerenciamento no painel do front-end.
+- Implementação do **Motor de Lances** (`POST /lots/:id/bids`), garantindo validação de horário, incremento mínimo, checagem e bloqueio de saldo em tempo real, bloqueio de auto-superação e regra de *anti-sniping* (prorrogação de 2 minutos).
+- Criação do endpoint consolidado para a **Sala do Lote ao Vivo** (`GET /lots/:id/live-room`), entregando dados mastigados para o front-end (maior lance atual, histórico com nomes mascarados por privacidade, flag `isWinning` e tempo do servidor sincronizado).
+- Implementação do **Mecanismo de Liquidação**, transferindo o saldo comprometido para o leiloeiro ao fim do lote.
+- **Estratégia de Auditoria (Blockchain Pattern):** Implementação de encadeamento criptográfico com SHA-256 (`crypto.createHash('sha256')`) combinando os dados do lance (`lotId + bidderId + amount`) com o `previousHash` do lance anterior (ou `'GENESIS'` para o primeiro lance). Qualquer alteração direta no banco de dados quebra a integridade da cadeia de hashes, sendo detectada de forma transparente pela **Rota de Auditoria Pública**.
+- Script de **Seed** (`prisma/seed.ts`) configurado para popular o banco de dados com 1 leiloeiro, 2 licitantes e 1 lote ativo.
+- Documentação da API com **Swagger UI**.
+- Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest para validar todas as regras de negócio.
 
 ## Como rodar a aplicação localmente
 
@@ -108,6 +88,13 @@ npx prisma generate
 
 ```
 
+**6. Inicie o Seed para popular o banco de dados:**
+Isso irá gerar um Leiloeiro, dois Licitantes e um Lote com lance
+
+```bash
+npx tsx prisma/seed.ts
+```
+
 **6. Inicie o servidor de desenvolvimento:**
 
 ```bash
@@ -128,7 +115,7 @@ npm run test
 
 ## Decisões Arquiteturais (ADRs)
 
-As decisões técnicas fundamentais deste projeto (escolhas de modelagem, resiliência de API, estratégia de auditoria e stack escolhida) estão formalmente documentadas através de Architecture Decision Records na pasta [docs/adr/](https://www.google.com/search?q=./docs/adr/).
+As decisões técnicas fundamentais deste projeto (escolhas de modelagem, resiliência de API, estratégia de auditoria e stack escolhida) estão formalmente documentadas através de Architecture Decision Records na pasta [docs/adr/](./docs/adr/).
 
 ## Uso de Inteligência Artificial
 
