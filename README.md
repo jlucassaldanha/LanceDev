@@ -35,6 +35,8 @@ Para garantir uma base sólida e escalável, as seguintes decisões foram tomada
 
 * Criação da "catraca de segurança" (Middlewares) para proteger rotas específicas para `LEILOEIRO` ou `LICITANTE`.
 
+* Implementação da **Carteira**, com possibilidade de deposito para `LICITANTE` e geração de consulta de saldo.
+
 
 * Documentação inicial da API com **Swagger UI**.
 
@@ -88,7 +90,14 @@ npx prisma migrate dev
 
 ```
 
-**5. Inicie o servidor de desenvolvimento:**
+**5. Gere o Prisma Client:**
+Isso criará as tipagens locais do TypeScript necessárias para que a aplicação reconheça os modelos de dados:
+Bash
+```bash
+npx prisma generate
+```
+
+**6. Inicie o servidor de desenvolvimento:**
 
 ```bash
 npm run dev

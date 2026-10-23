@@ -118,5 +118,93 @@ export const swaggerDocs = {
         },
       },
     },
+    '/lots': {
+      get: {
+        summary: 'Lista os lotes da vitrine (com filtro opcional por status)',
+        tags: ['Lotes'],
+        parameters: [
+          {
+            name: 'status',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', enum: ['SCHEDULED', 'LIVE', 'FINISHED'] },
+            description: 'Filtrar lotes por status',
+          },
+        ],
+        responses: {
+          200: { description: 'Lista de lotes retornada com sucesso' },
+        },
+      },
+      post: {
+        summary: 'Cria um novo lote buscando dados na The Met API',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  externalItemId: { type: 'string', example: '436532' },
+                  startingBid: { type: 'number', example: 100000 },
+                  minimumIncrement: { type: 'number', example: 5000 },
+                  startTime: { type: 'string', format: 'date-time', example: '2026-10-24T10:00:00Z' },
+                  endTime: { type: 'string', format: 'date-time', example: '2026-10-26T20:00:00Z' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: { description: 'Lote criado com sucesso' },
+          400: { description: 'Campos obrigatórios faltando' },
+          403: { description: 'Acesso negado (apenas LEILOEIRO)' },
+          404: { description: 'Obra não encontrada na API' },
+          502: { description: 'Erro na API externa' },
+        },
+      },
+    },
+    '/lots/{id}': {
+      get: {
+        summary: 'Exibe os detalhes de um lote específico e seus últimos lances',
+        tags: ['Lotes'],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID do lote',
+          },
+        ],
+        responses: {
+          200: { description: 'Detalhes do lote retornados com sucesso' },
+          404: { description: 'Lote não encontrado' },
+        },
+      },
+      delete: {
+        summary: 'Cancela um lote que ainda não recebeu lances',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID do lote',
+          },
+        ],
+        responses: {
+          200: { description: 'Lote cancelado com sucesso' },
+          400: { description: 'Não é possível cancelar (já possui lances)' },
+          403: { description: 'Acesso negado' },
+          404: { description: 'Lote não encontrado' },
+        },
+      },
+    },
+
+
   },
 };

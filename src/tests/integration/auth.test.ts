@@ -4,12 +4,16 @@ import { app } from '../../index';
 import { prisma } from '../../config/database';
 
 beforeAll(async () => {
+  await prisma.bid.deleteMany();
+  await prisma.lot.deleteMany();
   await prisma.user.deleteMany();
 });
 
 afterAll(async () => {
+  await prisma.bid.deleteMany();
+  await prisma.lot.deleteMany();
   await prisma.user.deleteMany();
-  await prisma.$disconnect(); 
+  await prisma.$disconnect();
 });
 
 describe('Integração: Autenticação de Usuários', () => {

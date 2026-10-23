@@ -7,6 +7,8 @@ let licitanteToken: string;
 let leiloeiroToken: string;
 
 beforeAll(async () => {
+  await prisma.bid.deleteMany();
+  await prisma.lot.deleteMany();
   await prisma.user.deleteMany();
 
   // Criação dos usuários para o teste
@@ -33,6 +35,8 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await prisma.bid.deleteMany();
+  await prisma.lot.deleteMany();
   await prisma.user.deleteMany();
   await prisma.$disconnect();
 });
