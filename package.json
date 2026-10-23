@@ -4,6 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< Updated upstream
+=======
+    "build": "tsc",
+    "start": "npx tsx src/index.ts",
+>>>>>>> Stashed changes
     "dev": "ts-node src/index.ts",
     "test": "vitest run --no-file-parallelism",
     "postinstall": "prisma skills sync || exit 0"
