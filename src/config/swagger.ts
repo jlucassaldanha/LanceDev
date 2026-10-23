@@ -239,6 +239,43 @@ export const swaggerDocs = {
         },
       },
     },
-
+    '/lots/{id}/bids': {
+      post: {
+        summary: 'Regista um novo lance num lote (Apenas LICITANTE)',
+        tags: ['Lances'],
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID do lote',
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  amount: { type: 'number', example: 1500 },
+                },
+                required: ['amount'],
+              },
+            },
+          },
+        },
+        responses: {
+          201: { description: 'Lance registado com sucesso' },
+          400: { description: 'Erro de validação (lance muito baixo, saldo insuficiente, etc.)' },
+          401: { description: 'Utilizador não autenticado ou token ausente' },
+          403: { description: 'Acesso negado (apenas LICITANTE)' },
+          404: { description: 'Lote não encontrado' },
+        },
+      },
+    },
+    
   },
 };
