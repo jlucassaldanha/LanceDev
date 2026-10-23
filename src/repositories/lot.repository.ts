@@ -71,4 +71,36 @@ export class LotRepository {
       orderBy: { startTime: 'desc' }, // Mais recentes primeiro
     });
   }
+
+  async closeLotWithWinner(lotId: string, winnerId: string, winningAmount: number, creatorId: string) {
+    return prisma.$transaction([
+      // 1. Debita definitivamente o valor do saldo do vencedor e limpa o comprometido
+      prisma.user.update({
+        where: { id: winnerId },
+        data: {
+          balance: { decrement: winningAmount },
+          committedBalance: { decrement: winningAmount },
+        },
+      }),
+      // 2. Credita o valor na carteira do leiloeiro
+      prisma.user.update({
+        where: { id: creatorId },
+        data: {
+          balance: { increment: winningAmount },
+        },
+      }),
+      // 3. Atualiza o status do lote para FINISHED
+      prisma.lot.update({
+        where: { id: lotId },
+        data: { status: 'FINISHED' },
+      }),
+    ]);
+  }
+
+  async closeLotWithoutWinner(lotId: string) {
+    return prisma.lot.update({
+      where: { id: lotId },
+      data: { status: 'FINISHED' },
+    });
+  }
 }

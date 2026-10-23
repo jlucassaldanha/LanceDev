@@ -276,6 +276,28 @@ export const swaggerDocs = {
         },
       },
     },
-    
+    '/lots/{id}/liquidate': {
+      post: {
+        summary: 'Liquida/encerra um lote expirado, transferindo valores e gerando o comprovante',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID do lote',
+          },
+        ],
+        responses: {
+          200: { description: 'Lote liquidado com sucesso' },
+          400: { description: 'Lote ainda não expirado ou já encerrado' },
+          401: { description: 'Não autenticado' },
+          403: { description: 'Acesso negado' },
+          404: { description: 'Lote não encontrado' },
+        },
+      },
+    },
   },
 };

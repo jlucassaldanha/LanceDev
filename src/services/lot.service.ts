@@ -1,6 +1,8 @@
+import { BidRepository } from '../repositories/bid.repository';
 import { LotRepository } from '../repositories/lot.repository';
 
 const lotRepository = new LotRepository();
+const bidRepository = new BidRepository();
 
 interface CreateLotDTO {
   externalItemId: string;
@@ -131,5 +133,51 @@ export class LotService {
 
   async listMyLots(creatorId: string) {
     return await lotRepository.findByCreatorId(creatorId);
+  }
+
+  async liquidateLot(lotId: string) {
+    const lot = await lotRepository.findById(lotId);
+    if (!lot) throw new Error('LOT_NOT_FOUND');
+
+    if (lot.status === 'FINISHED' || lot.status === 'CANCELLED') {
+      throw new Error('LOT_ALREADY_CLOSED');
+    }
+
+    // Valida se o tempo do leilão realmente já acabou
+    const now = new Date();
+    if (now < lot.endTime) {
+      throw new Error('LOT_NOT_YET_FINISHED');
+    }
+
+    // Busca o lance vencedor (o maior lance)
+    const highestBid = await bidRepository.findHighestBid(lotId);
+
+    if (highestBid) {
+      await lotRepository.closeLotWithWinner(
+        lotId,
+        highestBid.bidderId,
+        highestBid.amount,
+        lot.creatorId
+      );
+
+      return {
+        message: 'Lote liquidado com sucesso.',
+        winnerId: highestBid.bidderId,
+        winningAmount: highestBid.amount,
+        receipt: {
+          lotId: lot.id,
+          title: lot.title,
+          amount: highestBid.amount,
+          closedAt: new Date(),
+        },
+      };
+    } else {
+      await lotRepository.closeLotWithoutWinner(lotId);
+      return {
+        message: 'Lote encerrado sem lances (sem vencedor).',
+        winnerId: null,
+        winningAmount: 0,
+      };
+    }
   }
 }

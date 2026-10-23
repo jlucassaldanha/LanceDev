@@ -123,4 +123,29 @@ export class LotController {
       return res.status(500).json({ error: 'Erro interno ao buscar seus lotes.' });
     }
   }
+
+  async liquidate(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (typeof id !== 'string') {
+        return res.status(400).json({ error: 'O ID deve ser uma string válida.' });
+      }
+      
+      const result = await lotService.liquidateLot(id);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      switch (error.message) {
+        case 'LOT_NOT_FOUND':
+          return res.status(404).json({ error: 'Lote não encontrado.' });
+        case 'LOT_ALREADY_CLOSED':
+          return res.status(400).json({ error: 'Este lote já foi encerrado.' });
+        case 'LOT_NOT_YET_FINISHED':
+          return res.status(400).json({ error: 'O prazo de encerramento deste lote ainda não chegou.' });
+        default:
+          console.error('Erro ao liquidar lote:', error);
+          return res.status(500).json({ error: 'Erro interno ao processar a liquidação.' });
+      }
+    }
+  }
 }

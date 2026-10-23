@@ -21,6 +21,8 @@ router.post('/:id/bids', authenticate, isLicitante, (req, res) => bidController.
 
 // Apenas LEILOEIROS podem acessar estas rotas
 router.post('/', authenticate, isLeiloeiro, (req, res) => lotController.create(req, res));
+// Rota de Liquidação de Lote
+router.post('/:id/liquidate', authenticate, isLeiloeiro, (req, res) => lotController.liquidate(req, res));
 router.delete('/:id', authenticate, isLeiloeiro, (req, res) => lotController.cancel(req, res));
 
 export default router;
