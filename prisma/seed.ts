@@ -67,9 +67,9 @@ async function main() {
 
   const lot = await prisma.lot.create({
     data: {
-      title: 'Retrato de Homem Nobre (The Met Collection)',
-      imageUrl: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP159802.jpg',
-      externalItemId: '436532',
+      title: 'Women Picking Olives',
+      imageUrl: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP-17161-001.jpg',
+      externalItemId: '436536',
       startingBid: 1000.0,
       minimumIncrement: 100.0,
       startTime,

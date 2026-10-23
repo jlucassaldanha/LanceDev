@@ -103,6 +103,6 @@ describe('Integração: Motor de Lances', () => {
       .send({ amount: 2000 });
 
     expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Você já está ganhando este lote.');
+    expect(response.body.error).toBe('Você não pode fazer um novo lance pois já está ganhando este lote.');
   });
 });
