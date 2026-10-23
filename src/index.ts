@@ -6,6 +6,7 @@ import { swaggerDocs } from './config/swagger';
 import authRoutes from './routes/auth.routes';
 import walletRoutes from './routes/wallet.routes';
 import lotRoutes from './routes/lot.routes';
+import auditRoutes from './routes/audit.routes';
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.use(auditRoutes);
 
 app.use('/auth', authRoutes);
 app.use('/wallet', walletRoutes);

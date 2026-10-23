@@ -299,5 +299,25 @@ export const swaggerDocs = {
         },
       },
     },
+    '/lots/{id}/audit': {
+      get: {
+        summary: 'Audita o histórico de lances de um lote publicamente (Verifica integridade SHA-256)',
+        tags: ['Auditoria'],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'ID do lote',
+          },
+        ],
+        responses: {
+          200: { description: 'Relatório de auditoria e validação de integridade gerado com sucesso' },
+          404: { description: 'Lote não encontrado' },
+        },
+      },
+    },
+    
   },
 };
