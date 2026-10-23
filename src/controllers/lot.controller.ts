@@ -168,4 +168,15 @@ export class LotController {
       return res.status(500).json({ error: 'Erro interno ao carregar a sala ao vivo.' });
     }
   }
+
+  async getMyWinnings(req: Request, res: Response) {
+    try {
+      const userId = req.user!.id; 
+      const winnings = await lotService.getMyWinnings(userId);
+      return res.status(200).json(winnings);
+    } catch (error) {
+      console.error('Erro ao buscar lotes arrematados:', error);
+      return res.status(500).json({ error: 'Erro interno ao buscar seus arremates.' });
+    }
+  }
 }

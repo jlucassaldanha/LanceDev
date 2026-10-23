@@ -17,3 +17,5 @@ explicar sobre os testes
 problema conhecido: status do lote estatico no banco de dados deve ser atualizado manualmente via codigo
 
 utilização de cron job para atualização de status do lote e finalização
+
+criação de rota de winnings

@@ -339,5 +339,17 @@ export const swaggerDocs = {
         },
       },
     },
+    '/lots/my-winnings': {
+      get: {
+        summary: 'Lista os lotes arrematados (comprovantes) do licitante autenticado',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: 'Lista de arremates retornada com sucesso' },
+          401: { description: 'Token ausente ou inválido' },
+          403: { description: 'Acesso negado (apenas LICITANTE)' },
+        },
+      },
+    },
   },
 };

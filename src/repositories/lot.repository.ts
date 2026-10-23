@@ -103,4 +103,22 @@ export class LotRepository {
       data: { status: 'FINISHED' },
     });
   }
+
+  async findWinningsByUserId(userId: string) {
+    const finishedLots = await prisma.lot.findMany({
+      where: {
+        status: 'FINISHED',
+      },
+      include: {
+        bids: {
+          orderBy: { amount: 'desc' },
+          take: 1,
+        },
+      },
+    });
+
+    return finishedLots.filter(
+      (lot) => lot.bids.length > 0 && lot.bids[0]?.bidderId === userId
+    );
+  }
 }

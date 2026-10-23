@@ -282,4 +282,27 @@ export class LotService {
       bidsHistory: formattedBids,
     };
   }
+
+  async getMyWinnings(userId: string) {
+    const winningLots = await lotRepository.findWinningsByUserId(userId);
+
+    return winningLots.map((lot) => {
+      const winningBid = lot.bids[0];
+      return {
+        lotId: lot.id,
+        title: lot.title,
+        imageUrl: lot.imageUrl,
+        amount: winningBid?.amount,
+        closedAt: lot.endTime,
+        receipt: {
+          lotId: lot.id,
+          title: lot.title,
+          amount: winningBid?.amount,
+          closedAt: lot.endTime,
+          winnerId: userId,
+          shareableLink: `/lots/${lot.id}/receipt`,
+        },
+      };
+    });
+  }
 }

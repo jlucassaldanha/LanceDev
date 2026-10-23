@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.routes';
 import walletRoutes from './routes/wallet.routes';
 import lotRoutes from './routes/lot.routes';
 import auditRoutes from './routes/audit.routes';
+import { startLiquidationJob } from './jobs/liquidation.job';
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.use(auditRoutes);
 app.use('/auth', authRoutes);
 app.use('/wallet', walletRoutes);
 app.use('/lots', lotRoutes);
+
+startLiquidationJob();
 
 const PORT = process.env.PORT || 3000;
 
