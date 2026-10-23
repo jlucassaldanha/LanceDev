@@ -12,6 +12,14 @@ export class BidService {
     const lot = await lotRepository.findById(lotId);
     if (!lot) throw new Error('LOT_NOT_FOUND');
 
+    const now = new Date();
+    if (now < lot.startTime) {
+      throw new Error('LOT_NOT_STARTED'); 
+    }
+    if (now > lot.endTime) {
+      throw new Error('LOT_FINISHED'); 
+    }
+
     const highestBid = await bidRepository.findHighestBid(lotId);
     
     const bidder = await userRepository.findById(bidderId);

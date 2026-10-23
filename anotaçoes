@@ -13,3 +13,7 @@ Efeito Avalanche. Se um administrador mal-intencionado entrar direto no PostgreS
 explicar melhor sobre o uso de ia
 
 explicar sobre os testes
+
+problema conhecido: status do lote estatico no banco de dados deve ser atualizado manualmente via codigo
+
+utilização de cron job para atualização de status do lote e finalização

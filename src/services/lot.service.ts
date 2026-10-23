@@ -58,6 +58,18 @@ export class LotService {
     const imageUrl = metData.primaryImageSmall || metData.primaryImage || '';
     const title = metData.title;
 
+    const parsedStartTime = new Date(startTime);
+    const parsedEndTime = new Date(endTime);
+    const now = new Date();
+
+    let initialStatus: 'SCHEDULED' | 'LIVE' | 'FINISHED' = 'SCHEDULED';
+
+    if (now >= parsedStartTime && now <= parsedEndTime) {
+      initialStatus = 'LIVE'; // Se o horário de início já passou e ainda não acabou, nasce LIVE
+    } else if (now > parsedEndTime) {
+      initialStatus = 'FINISHED'; // Previne que um lote criado com datas no passado fique travado
+    }
+
     const newLot = await lotRepository.create({
       externalItemId: String(externalItemId),
       title,
@@ -66,6 +78,7 @@ export class LotService {
       minimumIncrement: Number(minimumIncrement),
       startTime: new Date(startTime),
       endTime: new Date(endTime),
+      status: initialStatus,
       creatorId,
     });
 
@@ -93,8 +106,29 @@ export class LotService {
   }
 
   async listLots(status?: string) {
-    return await lotRepository.findAll(status);
-  }
+  const lots = await lotRepository.findAll(status);
+  const now = new Date();
+
+  return lots.map(lot => {
+    let currentStatus = lot.status;
+    
+    // Sobrescreve o status do banco baseado no tempo real
+    if (lot.status !== 'CANCELLED' && lot.status !== 'FINISHED') {
+      if (now >= lot.startTime && now <= lot.endTime) {
+        currentStatus = 'LIVE';
+      } else if (now > lot.endTime) {
+        currentStatus = 'FINISHED';
+      } else {
+        currentStatus = 'SCHEDULED';
+      }
+    }
+
+    return {
+      ...lot,
+      status: currentStatus
+    };
+  });
+}
 
   async getLotById(lotId: string) {
     const lot = await lotRepository.findWithDetails(lotId);
