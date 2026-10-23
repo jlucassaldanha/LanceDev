@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Papéis exigidos no desafio
+enum Role {
+  LEILOEIRO
+  LICITANTE
+}
+
+// Status para organizar a vitrine de lotes
+enum LotStatus {
+  SCHEDULED
+  LIVE
+  FINISHED
+  CANCELLED
+}
+
+model User {
+  id               String  @id @default(uuid())
+  name             String
+  email            String  @unique
+  password         String 
+  role             Role
+  
+  // Carteira do licitante: saldo total e saldo comprometido
+  balance          Float   @default(0.0)
+  committedBalance Float   @default(0.0)
+
+  // Relacionamentos
+  lotsCreated      Lot[]   @relation("LotCreator")
+  bids             Bid[]
+}
+
+model Lot {
+  id               String    @id @default(uuid())
+  
+  // Cache dos dados da API externa para garantir resiliência
+  externalItemId   String    
+  title            String
+  imageUrl         String
+  
+  // Regras financeiras e de tempo do lote
+  startingBid      Float
+  minimumIncrement Float
+  startTime        DateTime
+  endTime          DateTime
+  status           LotStatus @default(SCHEDULED)
+  
+  creatorId        String
+  creator          User      @relation("LotCreator", fields: [creatorId], references: [id])
+  
+  bids             Bid[]
+}
+
+model Bid {
+  id           String   @id @default(uuid())
+  amount       Float
+  createdAt    DateTime @default(now())
+  
+  lotId        String
+  lot          Lot      @relation(fields: [lotId], references: [id])
+  
+  bidderId     String
+  bidder       User     @relation(fields: [bidderId], references: [id])
+
+  // Campos para garantir que o histórico seja à prova de adulteração
+  hash         String   @unique
+  previousHash String?  
+}
