@@ -36,7 +36,22 @@ Para garantir uma base sólida e escalável, as seguintes decisões foram tomada
 Saiba mais em [Estratégia de Auditoria](audit.md).
 - Script de **Seed** (`prisma/seed.ts`) configurado para popular o banco de dados com 1 leiloeiro, 2 licitantes e 1 lote ativo.
 - Documentação da API com **Swagger UI**.
+
 - Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest. Os testes cobrem o fluxo ponta a ponta das principais rotas do sistema (autenticação, carteira, motor de lances, salas ao vivo e regras de negócio essenciais). *Nota: A rota de winnings adicionada recentemente ainda não possui cobertura de testes automatizados nesta versão.*
+
+## Comportamentos Inesperados e Limitações Conhecidas
+
+* **Dados Estáticos de Lotes (Cache de Resiliência):** Para garantir que a aplicação continue funcionando integralmente caso a API do *The Met* fique offline, os dados essenciais da obra (título e imagem) são salvos definitivamente no banco local durante a criação do lote. Consequentemente, caso o museu altere as informações originais da obra em sua API posteriormente, a base de dados da plataforma não refletirá essa mudança automaticamente.
+
+
+* **Acoplamento na Inserção de Lances:** A estratégia para garantir um histórico à prova de adulterações utiliza encadeamento criptográfico com SHA-256. Isso exige que o algoritmo combine os dados do novo lance com o *hash* gerado no lance imediatamente anterior. Essa estrutura gera um acoplamento obrigatório na rotina de lances, exigindo uma consulta síncrona ao banco para resgatar o último *hash* gerado antes de persistir o novo registro.
+
+
+* **Ausência de Restrições Físicas de Papéis no Banco:** A modelagem do sistema utiliza uma única tabela `User`, diferenciando usuários através do *enum* de `Role` (`LEILOEIRO` e `LICITANTE`) para simplificar a autenticação. Como consequência, as restrições físicas de relacionamento exclusivo no banco de dados deixam de existir. Toda a responsabilidade por bloquear ações indevidas (como impedir um leiloeiro de dar lances ou depositar fundos indevidamente) depende estritamente do rigor da camada de código através da interceptação por Middlewares.
+
+
+* **Superfície de Endpoints Expandida:** Para otimizar a experiência do *front-end* e isolar regras financeiras, foram criadas rotas dedicadas (como `/lots/my-lots` exclusiva para leiloeiros e depósitos exclusivos para licitantes). O comportamento esperado dessa divisão é um leve aumento na quantidade de endpoints expostos, o que demandou maior controle de segurança nas rotas.
+
 
 ## Como rodar a aplicação localmente
 
@@ -53,7 +68,6 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento.
 
 ```bash
 npm install
-
 ```
 
 **2. Configure as variáveis de ambiente:**
@@ -63,14 +77,12 @@ Crie um arquivo `.env` na raiz do projeto contendo as seguintes chaves:
 DATABASE_URL="postgresql://admin:adminpassword@localhost:5432/leiloes_db?schema=public"
 JWT_SECRET="sua_chave_secreta_aqui"
 PORT=3000
-
 ```
 
 **3. Suba o banco de dados com Docker Compose:**
 
 ```bash
 docker-compose up -d
-
 ```
 
 Isso iniciará um container com o PostgreSQL rodando na porta 5432.
@@ -80,7 +92,6 @@ Isso criará as tabelas no seu banco de dados:
 
 ```bash
 npx prisma migrate dev
-
 ```
 
 **5. Gere o Prisma Client:**
@@ -88,7 +99,6 @@ Isso criará as tipagens locais do TypeScript necessárias para que a aplicaçã
 
 ```bash
 npx prisma generate
-
 ```
 
 **6. Inicie o Seed para popular o banco de dados:**
@@ -119,7 +129,6 @@ Credenciais geradas pelo Seed para testes:
 
 ```bash
 npm run dev
-
 ```
 
 O servidor estará rodando em `http://localhost:3000`. Você pode acessar a documentação interativa para testar as rotas em `http://localhost:3000/api-docs`.
@@ -130,7 +139,6 @@ Para executar os testes de integração configurados com Vitest:
 
 ```bash
 npm run test
-
 ```
 
 ## Decisões Arquiteturais (ADRs)
