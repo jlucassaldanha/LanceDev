@@ -4,6 +4,10 @@ import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerDocs } from './config/swagger';
 import authRoutes from './routes/auth.routes';
+import walletRoutes from './routes/wallet.routes';
+import lotRoutes from './routes/lot.routes';
+import auditRoutes from './routes/audit.routes';
+import { startLiquidationJob } from './jobs/liquidation.job';
 
 dotenv.config();
 
@@ -14,7 +18,13 @@ app.use(express.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+app.use(auditRoutes);
+
 app.use('/auth', authRoutes);
+app.use('/wallet', walletRoutes);
+app.use('/lots', lotRoutes);
+
+startLiquidationJob();
 
 const PORT = process.env.PORT || 3000;
 

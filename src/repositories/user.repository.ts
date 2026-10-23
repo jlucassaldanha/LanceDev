@@ -8,9 +8,37 @@ export class UserRepository {
     });
   }
 
+  async findById(id: string) {
+    return prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  async findByIds(ids: string[]) {
+    return prisma.user.findMany({
+      where: { id: { in: ids } },
+    });
+  }
+
   async create(data: Prisma.UserCreateInput) {
     return prisma.user.create({
       data,
+    });
+  }
+
+  async addBalance(userId: string, amount: number) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        balance: {
+          increment: amount,
+        },
+      },
+      select: {
+        id: true,
+        balance: true,
+        committedBalance: true,
+      }
     });
   }
 }
