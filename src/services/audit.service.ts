@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { prisma } from '../config/database';
+import { Prisma } from '@prisma/client';
 
 export class AuditService {
   async auditLotBids(lotId: string) {
@@ -24,7 +25,7 @@ export class AuditService {
     // 2. Recalcula e valida cada hash da cadeia
     for (const bid of lot.bids) {
       // Recria o hash esperado para este lance
-      const dataToHash = `${bid.lotId}:${bid.bidderId}:${bid.amount}:${bid.previousHash}`;
+      const dataToHash = `${bid.lotId}:${bid.bidderId}:${new Prisma.Decimal(bid.amount).toFixed(2)}:${bid.previousHash}`;
       const calculatedHash = crypto.createHash('sha256').update(dataToHash).digest('hex');
 
       // Verifica se o previousHash bate com o esperado e se o hash gravado é válido

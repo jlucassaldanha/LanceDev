@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../config/database';
+import { Decimal } from '@prisma/client/runtime/client';
 
 export class UserRepository {
   async findByEmail(email: string) {
@@ -26,7 +27,7 @@ export class UserRepository {
     });
   }
 
-  async addBalance(userId: string, amount: number) {
+  async addBalance(userId: string, amount: Decimal) {
     return prisma.user.update({
       where: { id: userId },
       data: {

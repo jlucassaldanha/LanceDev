@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '../config/database';
 import { BidRepository } from '../repositories/bid.repository';
 import { LotRepository } from '../repositories/lot.repository';
@@ -225,7 +226,7 @@ export class LotService {
       return {
         message: 'Lote encerrado sem lances (sem vencedor).',
         winnerId: null,
-        winningAmount: 0,
+        winningAmount: new Prisma.Decimal(0),
       };
     }
   }

@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../config/database';
+import { Decimal } from '@prisma/client/runtime/client';
 
 export class LotRepository {
   // UncheckedCreateInput porque o leiloeiroId é apenas uma string de relacionamento
@@ -72,7 +73,7 @@ export class LotRepository {
     });
   }
 
-  async closeLotWithWinner(lotId: string, winnerId: string, winningAmount: number, creatorId: string) {
+  async closeLotWithWinner(lotId: string, winnerId: string, winningAmount: Decimal, creatorId: string) {
     return prisma.$transaction([
       // 1. Debita definitivamente o valor do saldo do vencedor e limpa o comprometido
       prisma.user.update({

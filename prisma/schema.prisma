@@ -33,8 +33,8 @@ model User {
   role             Role
   
   // Carteira do licitante: saldo total e saldo comprometido
-  balance          Float   @default(0.0)
-  committedBalance Float   @default(0.0)
+  balance          Decimal   @default(0.0)
+  committedBalance Decimal   @default(0.0)
 
   // Relacionamentos
   lotsCreated      Lot[]   @relation("LotCreator")
@@ -50,8 +50,8 @@ model Lot {
   imageUrl         String
   
   // Regras financeiras e de tempo do lote
-  startingBid      Float
-  minimumIncrement Float
+  startingBid      Decimal
+  minimumIncrement Decimal
   startTime        DateTime
   endTime          DateTime
   status           LotStatus @default(SCHEDULED)
@@ -64,7 +64,7 @@ model Lot {
 
 model Bid {
   id           String   @id @default(uuid())
-  amount       Float
+  amount       Decimal
   createdAt    DateTime @default(now())
   
   lotId        String

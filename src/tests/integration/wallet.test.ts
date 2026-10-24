@@ -46,11 +46,11 @@ describe('Integração: Carteira (Depósito)', () => {
     const response = await request(app)
       .post('/wallet/deposit')
       .set('Authorization', `Bearer ${licitanteToken}`)
-      .send({ amount: 500 });
+      .send({ amount: 500.0 });
 
     expect(response.status).toBe(200);
-    expect(response.body.wallet.totalBalance).toBe(500);
-    expect(response.body.wallet.availableBalance).toBe(500);
+    expect(response.body.wallet.totalBalance).toBe("500");
+    expect(response.body.wallet.availableBalance).toBe("500");
   });
 
   it('Não deve permitir depósitos com valor zero ou negativo', async () => {
@@ -70,9 +70,9 @@ describe('Integração: Carteira (Depósito)', () => {
 
     expect(response.status).toBe(200);
     // Como depositamos 500 no teste anterior, o saldo deve refletir isso
-    expect(response.body.totalBalance).toBe(500);
-    expect(response.body.committedBalance).toBe(0);
-    expect(response.body.availableBalance).toBe(500);
+    expect(response.body.totalBalance).toBe("500");
+    expect(response.body.committedBalance).toBe("0");
+    expect(response.body.availableBalance).toBe("500");
   });
 
   it('Deve retornar os dados da carteira do LEILOEIRO corretamente', async () => {
@@ -82,8 +82,8 @@ describe('Integração: Carteira (Depósito)', () => {
 
     expect(response.status).toBe(200);
     // Como o leiloeiro não realiza depósitos, o saldo deve ser 0
-    expect(response.body.totalBalance).toBe(0);
-    expect(response.body.committedBalance).toBe(0);
-    expect(response.body.availableBalance).toBe(0);
+    expect(response.body.totalBalance).toBe("0");
+    expect(response.body.committedBalance).toBe("0");
+    expect(response.body.availableBalance).toBe("0");
   });
 });

@@ -1,17 +1,18 @@
+import { Decimal } from '@prisma/client/runtime/client';
 import { UserRepository } from '../repositories/user.repository';
 
 const userRepository = new UserRepository();
 
 export class WalletService {
-  async deposit(userId: string, amount: number) {
-    if (amount <= 0) {
+  async deposit(userId: string, amount: Decimal) {
+    if (amount.lessThanOrEqualTo(0)) {
       throw new Error('INVALID_AMOUNT');
     }
 
     const updatedUser = await userRepository.addBalance(userId, amount);
     
     // Calcula o saldo disponível (saldo total - saldo comprometido)
-    const availableBalance = updatedUser.balance - updatedUser.committedBalance;
+    const availableBalance = updatedUser.balance.minus(updatedUser.committedBalance);
 
     return { 
       id: updatedUser.id,
@@ -28,7 +29,7 @@ export class WalletService {
       throw new Error('USER_NOT_FOUND');
     }
 
-    const availableBalance = user.balance - user.committedBalance;
+    const availableBalance = user.balance.minus(user.committedBalance);
 
     return {
       userId,
