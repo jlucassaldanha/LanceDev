@@ -1,0 +1,8 @@
+# 0008. Acesso Unificado à Consulta de Carteira
+
+* **Status:** Aceito
+* **Contexto:** O escopo do projeto prevê que a consulta de saldo da carteira (total, comprometido e disponível) seja acessível tanto para licitantes quanto para leiloeiros. Enquanto os licitantes precisam gerenciar seus fundos depositados para realizar lances, os leiloeiros também necessitam acompanhar o rendimento dos lotes arrematados e gerenciar seus recursos. Precisava definir se a melhor abordagem seria criar endpoints e lógicas distintas para cada perfil ou reaproveitar a estrutura existente da carteira.
+* **Decisão:** Decidi expor o endpoint de consulta existente (`GET /`) para todos os usuários autenticados, removendo o middleware `isLicitante` apenas da rota de consulta de saldo, mas mantendo-o rigorosamente na rota de depósito (`POST /deposit`). Optou-se por retornar a mesma estrutura de objeto (saldo total, comprometido e disponível) para ambos os papéis (LEILOEIRO e LICITANTE).
+* **Consequências:**
+* **Positivo:** Padroniza as respostas da API e evita a duplicação de código, permitindo o reaproveitamento completo do `WalletService` e do `WalletController` sem nenhuma alteração estrutural.
+* **Negativo (Trade-off aceitável):** O leiloeiro recebe no retorno campos que são tecnicamente "desnecessários" para a sua regra de negócio. Como leiloeiros não realizam lances, o saldo comprometido (`committedBalance`) será sempre 0, resultando em um saldo disponível (`availableBalance`) sempre idêntico ao saldo total. No entanto, como o cálculo de subtração possui um custo de processamento praticamente nulo, este comportamento esperado foi adotado intencionalmente em prol de uma arquitetura mais limpa.
