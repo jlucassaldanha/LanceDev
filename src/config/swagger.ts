@@ -351,5 +351,66 @@ export const swaggerDocs = {
         },
       },
     },
+    "/lots/{id}/receipt": {
+      "get": {
+        "summary": "Retorna o comprovante de arremate de um lote",
+        "description": "Rota pública para visualização e compartilhamento de comprovantes de lotes encerrados. O nome do arrematante é mascarado para preservar a privacidade, atendendo aos requisitos de auditoria. Não exige token JWT.",
+        "tags": [
+          "Lots"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID do lote"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comprovante gerado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lotId": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "imageUrl": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "type": "number"
+                    },
+                    "closedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "winnerName": {
+                      "type": "string",
+                      "example": "Carlos C."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Este lote ainda não foi encerrado."
+          },
+          "404": {
+            "description": "Lote não encontrado."
+          }
+        }
+      }
+    }
   },
 };

@@ -179,4 +179,29 @@ export class LotController {
       return res.status(500).json({ error: 'Erro interno ao buscar seus arremates.' });
     }
   }
+
+  async getReceipt(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      
+      if (typeof id !== 'string') {
+        return res.status(400).json({ error: 'O ID deve ser uma string válida.' });
+      }
+
+      const receipt = await lotService.getLotReceipt(id);
+      
+      return res.status(200).json(receipt);
+    } catch (error: any) {
+      console.error('Erro ao buscar comprovante do lote:', error);
+      
+      if (error.message === 'Lote não encontrado.') {
+        return res.status(404).json({ error: error.message });
+      }
+      if (error.message === 'Este lote ainda não foi encerrado.') {
+        return res.status(400).json({ error: error.message });
+      }
+      
+      return res.status(500).json({ error: 'Erro interno ao buscar o comprovante.' });
+    }
+  }
 }
