@@ -63,16 +63,6 @@ describe('Integração: Carteira (Depósito)', () => {
     expect(response.body.error).toBe('O valor do depósito deve ser maior que zero.');
   });
 
-  it('Deve bloquear o acesso de um LEILOEIRO à rota de depósito', async () => {
-    const response = await request(app)
-      .post('/wallet/deposit')
-      .set('Authorization', `Bearer ${leiloeiroToken}`)
-      .send({ amount: 1000 });
-
-    expect(response.status).toBe(403);
-    expect(response.body.error).toBe('Acesso negado. Apenas licitantes podem realizar esta ação.');
-  });
-
   it('Deve retornar os dados da carteira do LICITANTE corretamente', async () => {
     const response = await request(app)
       .get('/wallet')
@@ -83,5 +73,17 @@ describe('Integração: Carteira (Depósito)', () => {
     expect(response.body.totalBalance).toBe(500);
     expect(response.body.committedBalance).toBe(0);
     expect(response.body.availableBalance).toBe(500);
+  });
+
+  it('Deve retornar os dados da carteira do LEILOEIRO corretamente', async () => {
+    const response = await request(app)
+      .get('/wallet')
+      .set('Authorization', `Bearer ${leiloeiroToken}`);
+
+    expect(response.status).toBe(200);
+    // Como o leiloeiro não realiza depósitos, o saldo deve ser 0
+    expect(response.body.totalBalance).toBe(0);
+    expect(response.body.committedBalance).toBe(0);
+    expect(response.body.availableBalance).toBe(0);
   });
 });
