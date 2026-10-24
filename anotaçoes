@@ -1,6 +1,9 @@
+Melhorar seed com:
+leiloeiro com
+leilao finalizado sem vencedor
+leilao finalizado com vencedor
+leilao ativo com lances
+leilao cancelado
 
-explicar melhor sobre o uso de ia
-
-explicar como fazer deploy na railway
-
-problemas conhecidos: o leiloeiro tbm tem saldo comprometido
+licitante com arremate e lances
+licitante sem arremate e lances
