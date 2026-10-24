@@ -41,6 +41,24 @@ Saiba mais em [Estratégia de Auditoria](AUDIT.md).
 * **Ausência de Restrições Físicas de Papéis no Banco:** A modelagem do sistema utiliza uma única tabela `User`, diferenciando usuários através do *enum* de `Role` (`LEILOEIRO` e `LICITANTE`) para simplificar a autenticação. Como consequência, as restrições físicas de relacionamento exclusivo no banco de dados deixam de existir. Toda a responsabilidade por bloquear ações indevidas (como impedir um leiloeiro de dar lances ou depositar fundos indevidamente) depende estritamente do rigor da camada de código através da interceptação por Middlewares.
 * **Superfície de Endpoints Expandida:** Para otimizar a experiência do *front-end* e isolar regras financeiras, foram criadas rotas dedicadas (como `/lots/my-lots` exclusiva para leiloeiros, depósitos exclusivos para licitantes e um endpoint público dedicado para recibos em `/lots/:id/receipt`). O comportamento esperado dessa divisão é um leve aumento na quantidade de endpoints expostos, o que demandou maior controle de segurança nas rotas.
 
+Conforme o estilo de formatação apresentado no arquivo image_27eb5a.png, aqui está a sua tabela em Markdown:
+
+### Testes
+
+**49 testes** em 9 suítes:
+
+| Suíte | Verifica |
+| --- | --- |
+| `audit.test` | Consulta pública sem token, integridade da cadeia de hashes intacta, lote inexistente |
+| `auth.test` | Registro, login, e-mail duplicado, validação de credenciais, campos e papéis (roles) |
+| `bid.test` | Bloqueio para leiloeiros, valor mínimo do lance, saldo suficiente, geração de hash, impossibilidade de cobrir próprio lance |
+| `liquidation.test` | Bloqueio para licitantes e respeito ao prazo, liquidação com/sem vencedor, transferência de saldo, duplo encerramento |
+| `liveroom.test` | Autenticação obrigatória, lote inexistente, flag de liderança (isWinning), mascaramento do líder atual |
+| `lot.test` | Criação com mock da API The Met, resiliência contra quedas (502), exclusão protegida, vitrine, pesquisa, lotes do leiloeiro |
+| `mywinnings.test` | Acesso restrito a licitantes, array vazio para perdedores, listagem de lotes arrematados pelo vencedor |
+| `receipt.test` | Emissão pública, exigência de lote finalizado, cenários sem arrematante, mascaramento de privacidade do vencedor |
+| `wallet.test` | Depósito exclusivo para licitantes, bloqueio de valores zerados ou negativos, consulta completa de carteira |
+
 
 ## Como rodar a aplicação localmente
 
