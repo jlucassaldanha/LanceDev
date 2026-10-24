@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import pg from 'pg';
@@ -32,6 +32,7 @@ async function main() {
       email: 'leiloeiro@leilodedev.com',
       password: passwordHash,
       role: 'LEILOEIRO',
+      balance: 1500.0,
     },
   });
   console.log(`Leiloeiro criado: ${leiloeiro.email}`);
@@ -43,8 +44,8 @@ async function main() {
       email: 'licitante1@leilodedev.com',
       password: passwordHash,
       role: 'LICITANTE',
-      balance: 10000.0,
-      committedBalance: 1500.0,
+      balance: 8500.0,
+      committedBalance: 2000.0,
     },
   });
 
@@ -62,39 +63,96 @@ async function main() {
 
   // 4. Criar Lote Publicado (Ativo / Ao Vivo)
   const now = new Date();
-  const startTime = new Date(now.getTime() - 3600000); // Começou há 1 hora
-  const endTime = new Date(now.getTime() + 7200000);   // Termina daqui a 2 horas
+  const pastStartTime = new Date(now.getTime() - 86400000 * 2); // Há 2 dias
+  const pastEndTime = new Date(now.getTime() - 86400000);     // Há 1 dia
+  const activeStartTime = new Date(now.getTime() - 3600000);  // Há 1 hora
+  const activeEndTime = new Date(now.getTime() + 7200000);  // Daqui a 2 horas
 
-  const lot = await prisma.lot.create({
+  await prisma.lot.create({
     data: {
       title: 'Women Picking Olives',
       imageUrl: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP-17161-001.jpg',
       externalItemId: '436536',
-      startingBid: 1000.0,
-      minimumIncrement: 100.0,
-      startTime,
-      endTime,
-      status: 'LIVE',
+      startingBid: 800.0,
+      minimumIncrement: 50.0,
+      startTime: pastStartTime,
+      endTime: pastEndTime,
+      status: 'FINISHED',
       creatorId: leiloeiro.id,
     },
   });
-  console.log(`Lote criado: "${lot.title}" (ID: ${lot.id})`);
+
+  const lotFinishedWithWinner = await prisma.lot.create({
+    data: {
+      title: 'Washington Crossing the Delaware',
+      imageUrl: 'https://images.metmuseum.org/CRDImages/ad/web-large/DP215410.jpg',
+      externalItemId: '11417',
+      startingBid: 1000.0,
+      minimumIncrement: 100.0,
+      startTime: pastStartTime,
+      endTime: pastEndTime,
+      status: 'FINISHED',
+      creatorId: leiloeiro.id,
+    },
+  });
 
   // 5. Simular um lance válido com encadeamento de hash (Blockchain Pattern)
-  const previousHash = 'GENESIS';
-  const bidData = `${lot.id}:${licitante1.id}:1500:${previousHash}`;
-  const hash = crypto.createHash('sha256').update(bidData).digest('hex');
+  const prevHashFinished = 'GENESIS';
+  const bidDataFinished = `${lotFinishedWithWinner.id}:${licitante1.id}:${new Prisma.Decimal(1500).toFixed(2)}:${prevHashFinished}`;
+  const hashFinished = crypto.createHash('sha256').update(bidDataFinished).digest('hex');
 
   await prisma.bid.create({
     data: {
       amount: 1500.0,
-      lotId: lot.id,
+      lotId: lotFinishedWithWinner.id,
       bidderId: licitante1.id,
-      hash,
-      previousHash,
+      hash: hashFinished,
+      previousHash: prevHashFinished,
+      createdAt: pastEndTime,
     },
   });
-  console.log('Lance inicial registrado e auditado com sucesso!');
+
+  const lotActive = await prisma.lot.create({
+    data: {
+      title: 'Fur Traders Descending the Missouri',
+      imageUrl: 'https://images.metmuseum.org/CRDImages/ad/web-large/DT73.jpg',
+      externalItemId: '10159',
+      startingBid: 1500.0,
+      minimumIncrement: 150.0,
+      startTime: activeStartTime,
+      endTime: activeEndTime,
+      status: 'LIVE',
+      creatorId: leiloeiro.id,
+    },
+  });
+
+  const prevHashActive = 'GENESIS';
+  const bidDataActive = `${lotActive.id}:${licitante1.id}:${new Prisma.Decimal(2000).toFixed(2)}:${prevHashActive}`;
+  const hashActive = crypto.createHash('sha256').update(bidDataActive).digest('hex');
+
+  await prisma.bid.create({
+    data: {
+      amount: 2000.0,
+      lotId: lotActive.id,
+      bidderId: licitante1.id,
+      hash: hashActive,
+      previousHash: prevHashActive,
+    },
+  });
+
+  await prisma.lot.create({
+    data: {
+      title: 'Young Woman with a Water Pitche',
+      imageUrl: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP353257.jpg',
+      externalItemId: '437881',
+      startingBid: 300.0,
+      minimumIncrement: 20.0,
+      startTime: pastStartTime,
+      endTime: activeEndTime,
+      status: 'CANCELLED', 
+      creatorId: leiloeiro.id,
+    },
+  });
 
   console.log('Seed concluído com sucesso!');
 }
