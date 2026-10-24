@@ -1,4 +1,4 @@
-#### 5. Endpoint Consolidado para a Sala do Lote ao Vivo (`GET /lots/:id/live-room`)
+# 0006. Endpoint Consolidado para a Sala do Lote ao Vivo (`GET /lots/:id/live-room`)
 
 * **Status:** Aceito
 * **Contexto:** Evitar o anti-padrão de sobrecarregar o front-end com múltiplos cálculos, requisições paralelas e lógica complexa de comparação de estado na interface.
