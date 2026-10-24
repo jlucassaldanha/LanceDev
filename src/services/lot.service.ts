@@ -300,9 +300,44 @@ export class LotService {
           amount: winningBid?.amount,
           closedAt: lot.endTime,
           winnerId: userId,
-          shareableLink: `/lots/${lot.id}/receipt`,
         },
       };
     });
+  }
+
+  async getLotReceipt(lotId: string) {
+    const lot = await lotRepository.findLotReceiptById(lotId);
+
+    if (!lot) {
+      throw new Error('Lote não encontrado.');
+    }
+
+    if (lot.status !== 'FINISHED') {
+      throw new Error('Este lote ainda não foi encerrado.');
+    }
+
+    const winningBid = lot.bids[0];
+
+    // Lida com o cenário de um lote que foi liquidado sem receber nenhum lance
+    if (!winningBid) {
+      return {
+        lotId: lot.id,
+        title: lot.title,
+        imageUrl: lot.imageUrl,
+        closedAt: lot.endTime,
+        message: 'Lote encerrado sem arrematante.'
+      };
+    }
+
+    const maskedName = maskBidderName(winningBid.bidder.name)
+
+    return {
+      lotId: lot.id,
+      title: lot.title,
+      imageUrl: lot.imageUrl,
+      amount: winningBid.amount,
+      closedAt: lot.endTime,
+      winnerName: maskedName,
+    };
   }
 }

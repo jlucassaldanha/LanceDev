@@ -121,4 +121,17 @@ export class LotRepository {
       (lot) => lot.bids.length > 0 && lot.bids[0]?.bidderId === userId
     );
   }
+
+  async findLotReceiptById(lotId: string) {
+    return await prisma.lot.findUnique({
+      where: { id: lotId },
+      include: {
+        bids: {
+          orderBy: { amount: 'desc' },
+          take: 1, // Pega apenas o lance vencedor
+          include: { bidder: true }, // Traz os dados do usuário para o mascaramento
+        },
+      },
+    });
+  }
 }
