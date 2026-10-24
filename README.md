@@ -153,7 +153,7 @@ As decisões técnicas fundamentais deste projeto (escolhas de modelagem, resili
 
 ## Uso de Inteligência Artificial
 
-Conforme as instruções de envio do desafio, ferramentas de IA foram utilizadas ao longo do desenvolvimento deste projeto. O uso foi estritamente focado em consultoria arquitetural, esclarecimento de dúvidas e aceleração de *boilerplate*, com revisão humana integral.
+Conforme as instruções de envio do desafio, ferramentas de IA foram utilizadas ao longo do desenvolvimento deste projeto. O uso foi estritamente focado em consultoria arquitetural, esclarecimento de dúvidas e aceleração de *boilerplate*, com revisão humana integral. As decisões foram minhas — arquitetura, identidade visual, modelo de venda, recorte de escopo, o que entra e o que fica de fora.
 
 Para ler os detalhes completos sobre quais decisões tiveram apoio de IA e como o código foi revisado, acesse a [Declaração de Uso de IA](IA_USE.md).
 
