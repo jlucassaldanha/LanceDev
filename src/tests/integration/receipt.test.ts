@@ -105,7 +105,7 @@ describe('Integração: Comprovante de Arremate Público (Receipt)', () => {
     expect(response.status).toBe(200);
     expect(response.body.lotId).toBe(lotFinishedId);
     expect(response.body.title).toBe('Estátua de Bronze');
-    expect(response.body.amount).toBe(1500);
+    expect(response.body.amount).toBe("1500");
     
     // Testa ativamente a regra de negócio de Privacidade Exigida pelo Desafio
     expect(response.body.winnerName).toBe('Carlos C.'); 

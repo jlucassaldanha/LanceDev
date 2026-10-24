@@ -177,7 +177,7 @@ describe('Integração: Lotes', () => {
 
     const obraEncontrada = response.body.find((lot: any) => lot.title === 'Obra para Vitrine');
     expect(obraEncontrada).toBeDefined();
-    expect(obraEncontrada.startingBid).toBe(3000);
+    expect(obraEncontrada.startingBid).toBe("3000");
   });
 
   it('Deve retornar os detalhes de um lote específico pelo ID', async () => {

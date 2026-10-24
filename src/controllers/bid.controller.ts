@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { BidService } from '../services/bid.service';
+import { Prisma } from '@prisma/client';
 
 const bidService = new BidService();
 
@@ -14,7 +15,7 @@ export class BidController {
       const lotId = req.params.id;
       const { amount } = req.body;
 
-      if (amount === undefined || typeof amount !== 'number' || amount <= 0) {
+      if (amount === undefined || isNaN(Number(amount)) || amount <= 0) {
         return res.status(400).json({ error: 'Informe um valor numérico válido para o lance.' });
       }
 
@@ -22,7 +23,7 @@ export class BidController {
         return res.status(400).json({ error: 'O ID do Lote deve ser uma string válida.' });
       }
       
-      const result = await bidService.placeBid(bidderId, lotId, amount);
+      const result = await bidService.placeBid(bidderId, lotId, new Prisma.Decimal(amount));
       
       return res.status(201).json(result);
 

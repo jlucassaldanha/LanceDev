@@ -1,3 +1,4 @@
+import { Decimal } from '@prisma/client/runtime/client';
 import { prisma } from '../config/database';
 
 export class BidRepository {
@@ -11,9 +12,9 @@ export class BidRepository {
   async executeBidTransaction(
     bidderId: string,
     lotId: string,
-    amount: number,
+    amount: Decimal,
     previousLeaderId: string | null,
-    previousLeaderAmount: number,
+    previousLeaderAmount: Decimal,
     newEndTime: Date | null,
     hash: string,         
     previousHash: string  

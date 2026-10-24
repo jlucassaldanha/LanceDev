@@ -74,7 +74,7 @@ describe('Integração: Sala do Lote ao Vivo (Live Room)', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('serverTime');
     expect(response.body.lot.id).toBe(lotId);
-    expect(response.body.currentLeader.amount).toBe(1200);
+    expect(response.body.currentLeader.amount).toBe("1200");
     expect(response.body.currentLeader.bidderName).toBe('Ana S.'); // Valida o mascaramento do nome
     expect(response.body.userStatus.isWinning).toBe(false);
     expect(response.body.bidsHistory.length).toBe(1);
@@ -94,7 +94,7 @@ describe('Integração: Sala do Lote ao Vivo (Live Room)', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.userStatus.isWinning).toBe(true);
-    expect(response.body.currentLeader.amount).toBe(1500);
+    expect(response.body.currentLeader.amount).toBe("1500");
     expect(response.body.currentLeader.bidderName).toBe('Carlos S.');
     expect(response.body.bidsHistory[0].isUserBid).toBe(true); // O lance topo é dele
   });

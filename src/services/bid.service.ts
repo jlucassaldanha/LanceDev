@@ -2,13 +2,15 @@ import crypto from 'crypto';
 import { LotRepository } from '../repositories/lot.repository';
 import { BidRepository } from '../repositories/bid.repository';
 import { UserRepository } from '../repositories/user.repository';
+import { Decimal } from '@prisma/client/runtime/client';
+import { Prisma } from '@prisma/client';
 
 const lotRepository = new LotRepository();
 const bidRepository = new BidRepository();
 const userRepository = new UserRepository(); 
 
 export class BidService {
-  async placeBid(bidderId: string, lotId: string, amount: number) {
+  async placeBid(bidderId: string, lotId: string, amount: Decimal) {
     const lot = await lotRepository.findById(lotId);
     if (!lot) throw new Error('LOT_NOT_FOUND');
 
@@ -32,7 +34,7 @@ export class BidService {
     const newEndTime = this.calculateAntiSniping(lot);
 
     const previousLeaderId = highestBid ? highestBid.bidderId : null;
-    const previousLeaderAmount = highestBid ? highestBid.amount : 0;
+    const previousLeaderAmount = highestBid ? highestBid.amount : new Prisma.Decimal(0);
 
     const previousHash = highestBid ? highestBid.hash : 'GENESIS';
     
@@ -59,22 +61,22 @@ export class BidService {
     if (now > lot.endTime) throw new Error('LOT_FINISHED');
   }
 
-  private validateBidRules(highestBid: any, bidderId: string, amount: number, lot: any) {
+  private validateBidRules(highestBid: any, bidderId: string, amount: Decimal, lot: any) {
     if (highestBid && highestBid.bidderId === bidderId) {
       throw new Error('ALREADY_WINNING');
     }
 
     if (highestBid) {
-      const minRequired = highestBid.amount + lot.minimumIncrement;
-      if (amount < minRequired) throw new Error('BID_TOO_LOW');
+      const minRequired = highestBid.amount.plus(lot.minimumIncrement);
+      if (amount.lessThan(minRequired)) throw new Error('BID_TOO_LOW');
     } else {
-      if (amount < lot.startingBid) throw new Error('BID_TOO_LOW');
+      if (amount.lessThan(lot.startingBid)) throw new Error('BID_TOO_LOW');
     }
   }
 
-  private validateFunds(bidder: any, amount: number) {
-    const availableBalance = bidder.balance - bidder.committedBalance;
-    if (amount > availableBalance) {
+  private validateFunds(bidder: any, amount: Decimal) {
+    const availableBalance = bidder.balance.minus(bidder.committedBalance);
+    if (amount.greaterThan(availableBalance)) {
       throw new Error('INSUFFICIENT_FUNDS');
     }
   }
@@ -91,8 +93,8 @@ export class BidService {
     return null;
   }
 
-  private generateHash(lotId: string, bidderId: string, amount: number, previousHash: string): string {
-    const data = `${lotId}:${bidderId}:${amount}:${previousHash}`;
+  private generateHash(lotId: string, bidderId: string, amount: Decimal, previousHash: string): string {
+    const data = `${lotId}:${bidderId}:${new Prisma.Decimal(amount).toFixed(2)}:${previousHash}`;
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 }

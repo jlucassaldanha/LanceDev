@@ -1,20 +1,20 @@
 import { Request, Response } from 'express';
 import { WalletService } from '../services/wallet.service';
+import { Prisma } from '@prisma/client';
 
 const walletService = new WalletService();
 
 export class WalletController {
   async deposit(req: Request, res: Response) {
     try {
-      // O req.user existe e está tipado graças ao nosso middleware de autenticação
       const userId = req.user!.id; 
       const { amount } = req.body;
 
-      if (amount === undefined || typeof amount !== 'number') {
+      if (amount === undefined || isNaN(Number(amount))) {
         return res.status(400).json({ error: 'O valor (amount) é obrigatório e deve ser numérico.' });
       }
 
-      const result = await walletService.deposit(userId, amount);
+      const result = await walletService.deposit(userId, new Prisma.Decimal(amount));
       return res.status(200).json({ 
         message: 'Depósito simulado realizado com sucesso.', 
         wallet: result 

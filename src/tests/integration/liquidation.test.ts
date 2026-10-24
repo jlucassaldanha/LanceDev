@@ -3,6 +3,7 @@ import request from 'supertest';
 import { app } from '../../index';
 import { prisma } from '../../config/database';
 import jwt from 'jsonwebtoken';
+import { Prisma } from '@prisma/client';
 
 describe('Integração: Mecanismo de Liquidação', () => {
   let leiloeiroToken: string;
@@ -123,7 +124,7 @@ describe('Integração: Mecanismo de Liquidação', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.winnerId).toBeNull();
-    expect(response.body.winningAmount).toBe(0);
+    expect(response.body.winningAmount).toBe("0");
   });
 
   it('Deve liquidar com sucesso um lote expirado com vencedor, debitando o comprador e creditando o leiloeiro', async () => {
@@ -133,17 +134,17 @@ describe('Integração: Mecanismo de Liquidação', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.winnerId).toBe(vencedorId);
-    expect(response.body.winningAmount).toBe(1200);
+    expect(response.body.winningAmount).toBe("1200");
     expect(response.body).toHaveProperty('receipt');
 
     // Valida se o saldo do vencedor foi deduzido definitivamente (5000 - 1200 = 3800) e o comprometido zerado
     const vencedorDb = await prisma.user.findUnique({ where: { id: vencedorId } });
-    expect(vencedorDb?.balance).toBe(3800);
-    expect(vencedorDb?.committedBalance).toBe(0);
+    expect(vencedorDb?.balance).toEqual(new Prisma.Decimal(3800));
+    expect(vencedorDb?.committedBalance).toEqual(new Prisma.Decimal(0));
 
     // Valida se o leiloeiro recebeu o crédito (0 + 1200 = 1200)
     const leiloeiroDb = await prisma.user.findUnique({ where: { id: leiloeiroId } });
-    expect(leiloeiroDb?.balance).toBe(1200);
+    expect(leiloeiroDb?.balance).toEqual(new Prisma.Decimal(1200));
   });
 
   it('Não deve permitir liquidar um lote que já foi encerrado', async () => {

@@ -3,6 +3,7 @@ import request from 'supertest';
 import { app } from '../../index';
 import { prisma } from '../../config/database';
 import jwt from 'jsonwebtoken';
+import { Prisma } from '@prisma/client';
 
 describe('Integração: Motor de Lances', () => {
   let leiloeiroToken: string;
@@ -88,7 +89,7 @@ describe('Integração: Motor de Lances', () => {
 
     // Validar se o saldo foi comprometido na base de dados
     const userDb = await prisma.user.findUnique({ where: { id: licitanteId } });
-    expect(userDb?.committedBalance).toBe(1500);
+    expect(userDb?.committedBalance).toEqual(new Prisma.Decimal(1500));
 
     // Validar se o hash foi gerado
     const bidDb = await prisma.bid.findFirst({ where: { lotId }, orderBy: { amount: 'desc' } });
