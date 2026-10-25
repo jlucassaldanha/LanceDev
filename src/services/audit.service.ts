@@ -1,6 +1,10 @@
 import crypto from 'crypto';
 import { prisma } from '../config/database';
 import { Prisma } from '@prisma/client';
+import { maskBidderName } from './lot.service';
+import { UserRepository } from '../repositories/user.repository';
+
+const userRepository = new UserRepository();
 
 export class AuditService {
   async auditLotBids(lotId: string) {
@@ -35,6 +39,8 @@ export class AuditService {
         isTampered = true;
       }
 
+      const bidder = await userRepository.findById(bid.bidderId) 
+
       auditedBids.push({
         id: bid.id,
         amount: bid.amount,
@@ -43,6 +49,7 @@ export class AuditService {
         calculatedHash,
         previousHash: bid.previousHash,
         isValid,
+        bidderName: maskBidderName(bidder?.name)
       });
 
       // O próximo lance deve apontar para o hash atual
@@ -53,6 +60,7 @@ export class AuditService {
       lotId: lot.id,
       lotTitle: lot.title,
       totalBids: lot.bids.length,
+      lotImageUrl: lot.imageUrl,
       isIntegrityIntact: !isTampered,
       auditDetails: auditedBids,
     };

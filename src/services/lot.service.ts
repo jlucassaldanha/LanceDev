@@ -16,7 +16,7 @@ interface CreateLotDTO {
   endTime: string;
 }
 
-function maskBidderName(name?: string): string {
+export function maskBidderName(name?: string): string {
   if (!name) return 'Licitante Anônimo';
   const parts = name.trim().split(' ');
   const firstName = parts[0];
