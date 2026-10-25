@@ -16,7 +16,7 @@ interface CreateLotDTO {
   endTime: string;
 }
 
-function maskBidderName(name?: string): string {
+export function maskBidderName(name?: string): string {
   if (!name) return 'Licitante Anônimo';
   const parts = name.trim().split(' ');
   const firstName = parts[0];
@@ -107,29 +107,30 @@ export class LotService {
   }
 
   async listLots(status?: string) {
-  const lots = await lotRepository.findAll(status);
-  const now = new Date();
+    const lots = await lotRepository.findAll(status);
+    const now = new Date();
 
-  return lots.map(lot => {
-    let currentStatus = lot.status;
-    
-    // Sobrescreve o status do banco baseado no tempo real
-    if (lot.status !== 'CANCELLED' && lot.status !== 'FINISHED') {
-      if (now >= lot.startTime && now <= lot.endTime) {
-        currentStatus = 'LIVE';
-      } else if (now > lot.endTime) {
-        currentStatus = 'FINISHED';
-      } else {
-        currentStatus = 'SCHEDULED';
+    return lots.map(lot => {
+      let currentStatus = lot.status;
+      
+      // Sobrescreve o status do banco baseado no tempo real
+      if (lot.status !== 'CANCELLED' && lot.status !== 'FINISHED') {
+        if (now >= lot.startTime && now <= lot.endTime) {
+          currentStatus = 'LIVE';
+        } else if (now > lot.endTime) {
+          currentStatus = 'FINISHED';
+        } else {
+          currentStatus = 'SCHEDULED';
+        }
       }
-    }
 
-    return {
-      ...lot,
-      status: currentStatus
-    };
-  });
-}
+      return {
+        ...lot,
+        bids: lot.bids[0],
+        status: currentStatus
+      };
+    });
+  }
 
   async getLotById(lotId: string) {
     const lot = await lotRepository.findWithDetails(lotId);
