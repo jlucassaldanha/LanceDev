@@ -126,7 +126,7 @@ export class LotService {
 
       return {
         ...lot,
-        bids: lot.bids[0],
+        winningBid: lot.bids[0],
         status: currentStatus
       };
     });
