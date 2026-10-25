@@ -33,6 +33,13 @@ export class LotRepository {
         status: status ? status : { not: 'CANCELLED' }, // Oculta cancelados por padrão
       },
       include: {
+        bids: {
+          orderBy: [
+            { amount: 'desc' },
+            { createdAt: 'desc' }
+          ],
+          take: 1, 
+        },
         _count: {
           select: { bids: true },
         },

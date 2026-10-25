@@ -107,29 +107,29 @@ export class LotService {
   }
 
   async listLots(status?: string) {
-  const lots = await lotRepository.findAll(status);
-  const now = new Date();
+    const lots = await lotRepository.findAll(status);
+    const now = new Date();
 
-  return lots.map(lot => {
-    let currentStatus = lot.status;
-    
-    // Sobrescreve o status do banco baseado no tempo real
-    if (lot.status !== 'CANCELLED' && lot.status !== 'FINISHED') {
-      if (now >= lot.startTime && now <= lot.endTime) {
-        currentStatus = 'LIVE';
-      } else if (now > lot.endTime) {
-        currentStatus = 'FINISHED';
-      } else {
-        currentStatus = 'SCHEDULED';
+    return lots.map(lot => {
+      let currentStatus = lot.status;
+      
+      // Sobrescreve o status do banco baseado no tempo real
+      if (lot.status !== 'CANCELLED' && lot.status !== 'FINISHED') {
+        if (now >= lot.startTime && now <= lot.endTime) {
+          currentStatus = 'LIVE';
+        } else if (now > lot.endTime) {
+          currentStatus = 'FINISHED';
+        } else {
+          currentStatus = 'SCHEDULED';
+        }
       }
-    }
 
-    return {
-      ...lot,
-      status: currentStatus
-    };
-  });
-}
+      return {
+        ...lot,
+        status: currentStatus
+      };
+    });
+  }
 
   async getLotById(lotId: string) {
     const lot = await lotRepository.findWithDetails(lotId);
