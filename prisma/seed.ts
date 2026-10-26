@@ -66,7 +66,7 @@ async function main() {
   const pastStartTime = new Date(now.getTime() - 86400000 * 2); // Há 2 dias
   const pastEndTime = new Date(now.getTime() - 86400000);     // Há 1 dia
   const activeStartTime = new Date(now.getTime() - 3600000);  // Há 1 hora
-  const activeEndTime = new Date(now.getTime() + 7200000);  // Daqui a 2 horas
+  const activeEndTime = new Date(now.getTime() + 86400000);  
 
   await prisma.lot.create({
     data: {

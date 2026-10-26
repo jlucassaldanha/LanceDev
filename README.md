@@ -2,6 +2,15 @@
 
 Este é o repositório do back-end para o desafio da Casa de Leilões online. A API foi construída em Node.js com Express e TypeScript, focando em robustez, resiliência e segurança arquitetural.
 
+## Aplicação publicada
+
+| Recurso | Endereço |
+| --- | --- |
+| Aplicação | https://lancedevweb.vercel.app |
+| API | https://lancedev-production.up.railway.app/ |
+| Swagger | https://lancedev-production.up.railway.app/api-docs/ |
+
+
 ## Decisões Técnicas e Arquitetura
 
 Para garantir uma base sólida e escalável, as seguintes decisões foram tomadas durante o desenvolvimento:

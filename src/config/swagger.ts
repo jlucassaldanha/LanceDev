@@ -66,6 +66,7 @@ export const swaggerDocs = {
         },
       },
     },
+
     '/wallet': {
       get: {
         summary: 'Consulta os saldos da carteira do usuário logado',
@@ -118,10 +119,11 @@ export const swaggerDocs = {
         },
       },
     },
+    
     '/lots': {
       get: {
         summary: 'Lista os lotes da vitrine (com filtro opcional por status)',
-        tags: ['Lotes'],
+        tags: ['Lotes - Public'],
         parameters: [
           {
             name: 'status',
@@ -135,9 +137,10 @@ export const swaggerDocs = {
           200: { description: 'Lista de lotes retornada com sucesso' },
         },
       },
+
       post: {
         summary: 'Cria um novo lote buscando dados na The Met API',
-        tags: ['Lotes'],
+        tags: ['Lotes - Leiloeiro'],
         security: [{ bearerAuth: [] }],
         requestBody: {
           required: true,
@@ -165,10 +168,11 @@ export const swaggerDocs = {
         },
       },
     },
+
     '/lots/{id}': {
       get: {
         summary: 'Exibe os detalhes de um lote específico e seus últimos lances',
-        tags: ['Lotes'],
+        tags: ['Lotes - Public'],
         parameters: [
           {
             name: 'id',
@@ -185,7 +189,7 @@ export const swaggerDocs = {
       },
       delete: {
         summary: 'Cancela um lote que ainda não recebeu lances',
-        tags: ['Lotes'],
+        tags: ['Lotes - Leiloeiro'],
         security: [{ bearerAuth: [] }],
         parameters: [
           {
@@ -207,7 +211,7 @@ export const swaggerDocs = {
     '/lots/search': {
       get: {
         summary: 'Pesquisa itens na The Met API para auxiliar na obtenção do externalItemId (Apenas LEILOEIRO)',
-        tags: ['Lotes'],
+        tags: ['Lotes - Leiloeiro'],
         security: [{ bearerAuth: [] }],
         parameters: [
           {
@@ -230,7 +234,7 @@ export const swaggerDocs = {
     '/lots/my-lots': {
       get: {
         summary: 'Lista todos os lotes criados pelo leiloeiro autenticado',
-        tags: ['Lotes'],
+        tags: ['Lotes - Leiloeiro'],
         security: [{ bearerAuth: [] }],
         responses: {
           200: { description: 'Lista dos meus lotes retornada com sucesso' },
@@ -242,7 +246,7 @@ export const swaggerDocs = {
     '/lots/{id}/bids': {
       post: {
         summary: 'Regista um novo lance num lote (Apenas LICITANTE)',
-        tags: ['Lances'],
+        tags: ['Lances - Licitante'],
         security: [{ bearerAuth: [] }],
         parameters: [
           {
@@ -321,7 +325,7 @@ export const swaggerDocs = {
     '/lots/{id}/live-room': {
       get: {
         summary: 'Retorna todas as informações consolidadas para a Sala do Lote ao Vivo',
-        tags: ['Lotes'],
+        tags: ['Lotes - Licitante'],
         security: [{ bearerAuth: [] }],
         parameters: [
           {
@@ -342,7 +346,7 @@ export const swaggerDocs = {
     '/lots/my-winnings': {
       get: {
         summary: 'Lista os lotes arrematados (comprovantes) do licitante autenticado',
-        tags: ['Lotes'],
+        tags: ['Lotes - Licitante'],
         security: [{ bearerAuth: [] }],
         responses: {
           200: { description: 'Lista de arremates retornada com sucesso' },
@@ -354,7 +358,7 @@ export const swaggerDocs = {
     '/lots/my-live-lots': {
       get: {
         summary: 'Lista os lotes ao vivo do licitante autenticado',
-        tags: ['Lotes'],
+        tags: ['Lotes - Licitante'],
         security: [{ bearerAuth: [] }],
         responses: {
           200: { description: 'Lista de lotes retornada com sucesso' },
@@ -368,7 +372,7 @@ export const swaggerDocs = {
         "summary": "Retorna o comprovante de arremate de um lote",
         "description": "Rota pública para visualização e compartilhamento de comprovantes de lotes encerrados. O nome do arrematante é mascarado para preservar a privacidade, atendendo aos requisitos de auditoria. Não exige token JWT.",
         "tags": [
-          "Lots"
+          "Lotes - Public"
         ],
         "parameters": [
           {
