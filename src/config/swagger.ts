@@ -351,6 +351,18 @@ export const swaggerDocs = {
         },
       },
     },
+    '/lots/my-live-lots': {
+      get: {
+        summary: 'Lista os lotes ao vivo do licitante autenticado',
+        tags: ['Lotes'],
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: 'Lista de lotes retornada com sucesso' },
+          401: { description: 'Token ausente ou inválido' },
+          403: { description: 'Acesso negado (apenas LICITANTE)' },
+        },
+      },
+    },
     "/lots/{id}/receipt": {
       "get": {
         "summary": "Retorna o comprovante de arremate de um lote",
