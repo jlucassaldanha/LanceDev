@@ -9,6 +9,7 @@ const bidController = new BidController();
 
 // Rota de pesquisa na API externa (Auxilia o leiloeiro a encontrar o externalItemId)
 router.get('/search', authenticate, isLeiloeiro, (req, res) => lotController.search(req, res));
+
 router.get('/my-lots', authenticate, isLeiloeiro, (req, res) => lotController.listMyLots(req, res));
 
 // Listar lotes da vitrine (público ou geral)

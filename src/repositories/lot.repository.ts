@@ -38,7 +38,6 @@ export class LotRepository {
             { amount: 'desc' },
             { createdAt: 'desc' }
           ],
-          take: 1, 
         },
         _count: {
           select: { bids: true },
@@ -72,6 +71,12 @@ export class LotRepository {
     return prisma.lot.findMany({
       where: { creatorId },
       include: {
+        bids: {
+          orderBy: [
+            { amount: 'desc' },
+            { createdAt: 'desc' }
+          ],
+        },
         _count: {
           select: { bids: true }, // Traz a contagem de lances
         },
