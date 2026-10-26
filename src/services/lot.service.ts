@@ -307,15 +307,21 @@ export class LotService {
     });
   }
 
+  async getMyLiveLots(userId: string) {
+    const myLots = await lotRepository.findMyBidLotsByUserId(userId);
+
+    return myLots
+  }
+
   async getLotReceipt(lotId: string) {
     const lot = await lotRepository.findLotReceiptById(lotId);
 
     if (!lot) {
-      throw new Error('Lote não encontrado.');
+      throw new Error('LOT_NOT_FOUND');
     }
 
     if (lot.status !== 'FINISHED') {
-      throw new Error('Este lote ainda não foi encerrado.');
+      throw new Error('LOT_NOT_FINISHED');
     }
 
     const winningBid = lot.bids[0];

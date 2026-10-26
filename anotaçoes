@@ -1,9 +1,2 @@
-Melhorar seed com:
-leiloeiro com
-leilao finalizado sem vencedor
-leilao finalizado com vencedor
-leilao ativo com lances
-leilao cancelado
-
-licitante com arremate e lances
-licitante sem arremate e lances
+problemas conhecidos:
+o mesmo lote pode ser publicado duas vezes

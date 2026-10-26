@@ -16,6 +16,8 @@ router.get('/', (req, res) => lotController.list(req, res));
 
 // Rota de Lotes Arrematados (Apenas LICITANTE)
 router.get('/my-winnings', authenticate, isLicitante, (req, res) => lotController.getMyWinnings(req, res));
+// Rota de lotes ao vivo (Apenas LICITANTE)
+router.get('/my-live-lots', authenticate, isLicitante, (req, res) => lotController.getMyLiveLots(req, res));
 
 router.get('/:id/live-room', authenticate, isLicitante, (req, res) => lotController.getLiveRoom(req, res));
 

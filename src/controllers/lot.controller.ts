@@ -180,6 +180,17 @@ export class LotController {
     }
   }
 
+  async getMyLiveLots(req: Request, res: Response) {
+    try {
+      const userId = req.user!.id; 
+      const lots = await lotService.getMyLiveLots(userId);
+      return res.status(200).json(lots);
+    } catch (error) {
+      console.error('Erro ao buscar lotes ao vivo:', error);
+      return res.status(500).json({ error: 'Erro interno ao buscar seus lotes ao vivo.' });
+    }
+  }
+
   async getReceipt(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -194,11 +205,11 @@ export class LotController {
     } catch (error: any) {
       console.error('Erro ao buscar comprovante do lote:', error);
       
-      if (error.message === 'Lote não encontrado.') {
-        return res.status(404).json({ error: error.message });
+      if (error.message === 'LOT_NOT_FOUND') {
+        return res.status(404).json({ error: 'Lote não encontrado.' });
       }
-      if (error.message === 'Este lote ainda não foi encerrado.') {
-        return res.status(400).json({ error: error.message });
+      if (error.message === 'LOT_NOT_FINISHED') {
+        return res.status(400).json({ error: 'Este lote ainda não foi encerrado.' });
       }
       
       return res.status(500).json({ error: 'Erro interno ao buscar o comprovante.' });

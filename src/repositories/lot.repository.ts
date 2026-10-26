@@ -130,6 +130,26 @@ export class LotRepository {
     );
   }
 
+  async findMyBidLotsByUserId(userId: string) {
+    const myLots = await prisma.lot.findMany({
+      where: {
+        status: 'LIVE',
+        bids: {
+          some: {
+            bidderId: userId
+          }
+        }
+      },
+      include: {
+        bids: {
+          orderBy: { amount: 'desc' },
+        },
+      },
+    });
+
+    return myLots
+  }
+
   async findLotReceiptById(lotId: string) {
     return await prisma.lot.findUnique({
       where: { id: lotId },
