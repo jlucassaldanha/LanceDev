@@ -187,7 +187,7 @@ export const swaggerDocs = {
           404: { description: 'Lote não encontrado' },
         },
       },
-      delete: {
+      patch: {
         summary: 'Cancela um lote que ainda não recebeu lances',
         tags: ['Lotes - Leiloeiro'],
         security: [{ bearerAuth: [] }],

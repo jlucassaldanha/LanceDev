@@ -21,9 +21,12 @@ export class LotRepository {
     });
   }
 
-  async delete(lotId: string) {
-    return prisma.lot.delete({
+  async cancelLot(lotId: string) {
+    return prisma.lot.update({
       where: { id: lotId },
+      data: {
+        status: 'CANCELLED'
+      }
     });
   }
 

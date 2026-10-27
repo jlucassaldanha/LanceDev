@@ -102,7 +102,7 @@ export class LotService {
       throw new Error('HAS_BIDS');
     }
 
-    await lotRepository.delete(lotId);
+    await lotRepository.cancelLot(lotId);
     return true;
   }
 

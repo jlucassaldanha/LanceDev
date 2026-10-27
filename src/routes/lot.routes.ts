@@ -31,7 +31,7 @@ router.post('/:id/bids', authenticate, isLicitante, (req, res) => bidController.
 router.post('/', authenticate, isLeiloeiro, (req, res) => lotController.create(req, res));
 // Rota de Liquidação de Lote
 router.post('/:id/liquidate', authenticate, isLeiloeiro, (req, res) => lotController.liquidate(req, res));
-router.delete('/:id', authenticate, isLeiloeiro, (req, res) => lotController.cancel(req, res));
+router.patch('/:id', authenticate, isLeiloeiro, (req, res) => lotController.cancel(req, res));
 
 // Rota pública para acessar o comprovante de um lote (compartilhável por link)
 router.get('/:id/receipt', (req, res) => lotController.getReceipt(req, res));

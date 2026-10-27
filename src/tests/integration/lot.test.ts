@@ -107,7 +107,7 @@ describe('Integração: Lotes', () => {
 
   it('Deve cancelar um lote com sucesso (se ainda não tiver lances)', async () => {
     const response = await request(app)
-      .delete(`/lots/${lotIdToCancel}`)
+      .patch(`/lots/${lotIdToCancel}`)
       .set('Authorization', `Bearer ${leiloeiroToken}`);
 
     expect(response.status).toBe(200);
@@ -145,7 +145,7 @@ describe('Integração: Lotes', () => {
     });
 
     const deleteResponse = await request(app)
-      .delete(`/lots/${lotId}`)
+      .patch(`/lots/${lotId}`)
       .set('Authorization', `Bearer ${leiloeiroToken}`);
 
     expect(deleteResponse.status).toBe(400);
