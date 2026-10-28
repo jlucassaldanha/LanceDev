@@ -48,8 +48,8 @@ model Lot {
   externalItemId    String    
   title             String
   imageUrl          String
-  artDate           String
-  artistDisplayName String
+  artDate           String    @default("Desconhecida")
+  artistDisplayName String    @default("Desconhecido")
   
   // Regras financeiras e de tempo do lote
   startingBid       Decimal
