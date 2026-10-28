@@ -152,21 +152,13 @@ Isso irá gerar um Leiloeiro, dois Licitantes e um Lote com lance
 npx tsx prisma/seed.ts
 ```
 Credenciais geradas pelo Seed para testes:
+> Todas as senhas são `123456`
 
-* **Leiloeiro:**
-  * E-mail: `leiloeiro@leilodedev.com`
-  * Senha: `123456`
-
-
-* **Licitante 1 (Líder atual do lote):**
-  * E-mail: `licitante1@leilodedev.com`
-  * Senha: `123456`
-
-
-* **Licitante 2:**
-  * E-mail: `licitante2@leilodedev.com`
-  * Senha: `123456`
-
+| Papel | E-mail |
+| --- | --- |
+| Leiloeiro | `leiloeiro@leilodedev.com` |
+| Licitante | `licitante1@leilodedev.com` |
+| Licitante | `licitante2@leilodedev.com` |
 
 
 **6. Inicie o servidor de desenvolvimento:**
