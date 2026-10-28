@@ -272,6 +272,8 @@ export class LotService {
         id: lot.id,
         title: lot.title,
         imageUrl: lot.imageUrl,
+        artDate: lot.artDate,
+        artistDisplayName: lot.artistDisplayName,
         startingBid: lot.startingBid,
         minimumIncrement: lot.minimumIncrement,
         startTime: lot.startTime,
@@ -336,6 +338,8 @@ export class LotService {
         lotId: lot.id,
         title: lot.title,
         imageUrl: lot.imageUrl,
+        artDate: lot.artDate,
+        artistDisplayName: lot.artistDisplayName,
         closedAt: lot.endTime,
         message: 'Lote encerrado sem arrematante.'
       };
@@ -347,6 +351,8 @@ export class LotService {
       lotId: lot.id,
       title: lot.title,
       imageUrl: lot.imageUrl,
+      artDate: lot.artDate,
+      artistDisplayName: lot.artistDisplayName,
       amount: winningBid.amount,
       closedAt: lot.endTime,
       winnerName: maskedName,
