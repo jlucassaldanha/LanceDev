@@ -72,6 +72,7 @@ async function main() {
     data: {
       title: 'Women Picking Olives',
       imageUrl: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP-17161-001.jpg',
+      artistDisplayName: "Vincent van Gogh",
       externalItemId: '436536',
       startingBid: 800.0,
       minimumIncrement: 50.0,
@@ -86,6 +87,7 @@ async function main() {
     data: {
       title: 'Washington Crossing the Delaware',
       imageUrl: 'https://images.metmuseum.org/CRDImages/ad/web-large/DP215410.jpg',
+      artistDisplayName: "William Keesey Hewitt",
       externalItemId: '11417',
       startingBid: 1000.0,
       minimumIncrement: 100.0,
@@ -116,6 +118,7 @@ async function main() {
     data: {
       title: 'Fur Traders Descending the Missouri',
       imageUrl: 'https://images.metmuseum.org/CRDImages/ad/web-large/DT73.jpg',
+      artistDisplayName: "George Caleb Bingham",
       externalItemId: '10159',
       startingBid: 1500.0,
       minimumIncrement: 150.0,
@@ -144,6 +147,7 @@ async function main() {
     data: {
       title: 'Young Woman with a Water Pitche',
       imageUrl: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP353257.jpg',
+      artistDisplayName: "Johannes Vermeer",
       externalItemId: '437881',
       startingBid: 300.0,
       minimumIncrement: 20.0,
