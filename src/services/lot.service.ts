@@ -56,8 +56,10 @@ export class LotService {
       throw new Error('EXTERNAL_API_UNAVAILABLE'); 
     }
 
-    const imageUrl = metData.primaryImageSmall || metData.primaryImage || '';
+    const imageUrl = metData.primaryImage || metData.primaryImageSmall || '';
     const title = metData.title;
+    const artDate = metData.objectDate;
+    const artistDisplayName = metData.artistDisplayName || 'Desconhecido';
 
     const parsedStartTime = new Date(startTime);
     const parsedEndTime = new Date(endTime);
@@ -75,6 +77,8 @@ export class LotService {
       externalItemId: String(externalItemId),
       title,
       imageUrl,
+      artDate,
+      artistDisplayName,
       startingBid: Number(startingBid),
       minimumIncrement: Number(minimumIncrement),
       startTime: new Date(startTime),

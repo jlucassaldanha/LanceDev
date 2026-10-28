@@ -42,24 +42,26 @@ model User {
 }
 
 model Lot {
-  id               String    @id @default(uuid())
+  id                String    @id @default(uuid())
   
   // Cache dos dados da API externa para garantir resiliência
-  externalItemId   String    
-  title            String
-  imageUrl         String
+  externalItemId    String    
+  title             String
+  imageUrl          String
+  artDate           String
+  artistDisplayName String
   
   // Regras financeiras e de tempo do lote
-  startingBid      Decimal
-  minimumIncrement Decimal
-  startTime        DateTime
-  endTime          DateTime
-  status           LotStatus @default(SCHEDULED)
+  startingBid       Decimal
+  minimumIncrement  Decimal
+  startTime         DateTime
+  endTime           DateTime
+  status            LotStatus @default(SCHEDULED)
   
-  creatorId        String
-  creator          User      @relation("LotCreator", fields: [creatorId], references: [id])
+  creatorId         String
+  creator           User      @relation("LotCreator", fields: [creatorId], references: [id])
   
-  bids             Bid[]
+  bids              Bid[]
 }
 
 model Bid {
