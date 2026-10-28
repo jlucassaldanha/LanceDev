@@ -17,7 +17,7 @@ Este é o repositório do back-end para o desafio da Casa de Leilões online. A 
 
 Para garantir uma base sólida e escalável, as seguintes decisões foram tomadas durante o desenvolvimento:
 
-* **Entidade de Usuário Unificada com Roles:** Optamos por utilizar uma única tabela de `User` no banco de dados, diferenciando os perfis através de um enum de `Role` (`LEILOEIRO` e `LICITANTE`). Essa escolha simplifica o fluxo de autenticação e mantém o banco de dados limpo.
+* **Entidade de Usuário Unificada com Roles:** Optei por utilizar uma única tabela de `User` no banco de dados, diferenciando os perfis através de um enum de `Role` (`LEILOEIRO` e `LICITANTE`). Essa escolha simplifica o fluxo de autenticação e mantém o banco de dados limpo.
 * **Segurança via Middlewares:** A separação de responsabilidades e a robustez das regras de negócio (como garantir que o leiloeiro não dê lances e o licitante não crie lotes) ficam centralizadas na camada de código. Middlewares interceptam as requisições baseados no token JWT para fazer a autorização de papéis.
 * **Endpoint Consolidado (Live Room):** Para evitar o anti-padrão de sobrecarregar o front-end com múltiplos cálculos e requisições paralelas, criamos um endpoint dedicado (`GET /lots/:id/live-room`). Ele centraliza a lógica de estado, cruzamento de dados de liderança (`isWinning`), aplica o mascaramento de privacidade e entrega os dados prontos para renderização sincronizados pelo relógio do servidor.
 * **Prisma 7:** O ORM escolhido foi o Prisma na versão 7, devido à sua estabilidade consolidada, previsibilidade nas migrações em relação a versões mais recentes, e pela familiaridade técnica.
@@ -42,7 +42,7 @@ Para garantir uma base sólida e escalável, as seguintes decisões foram tomada
 * **Estratégia de Auditoria (Blockchain Pattern):** Implementação de encadeamento criptográfico com SHA-256 (`crypto.createHash('sha256')`) combinando os dados do lance (`lotId + bidderId + amount`) com o `previousHash` do lance anterior (ou `'GENESIS'` para o primeiro lance). Qualquer alteração direta no banco de dados quebra a integridade da cadeia de hashes, sendo detectada de forma transparente pela **Rota de Auditoria Pública**.
 Saiba mais em [Estratégia de Auditoria](AUDIT.md).
 * Script de **Seed** (`prisma/seed.ts`) configurado para popular o banco de dados com 1 leiloeiro, 2 licitantes e 1 lote ativo.
-* Documentação da API com **Swagger UI** abrangendo todas as rotas (incluindo as recém-criadas de recibos e arremates).
+* Documentação da API com **Swagger UI** abrangendo todas as rotas 
 * Configuração de **Testes de Integração automatizados** utilizando o framework Vitest e Supertest. Os testes cobrem o fluxo ponta a ponta das principais rotas e regras de negócio do sistema (autenticação, carteira, motor de lances, salas ao vivo, auditoria, listagem de arremates e regras de privacidade do comprovante público).
 
 ## Comportamentos Inesperados e Limitações Conhecidas
